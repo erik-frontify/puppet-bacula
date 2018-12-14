@@ -1,0 +1,7 @@
+bacula::director_mysql_package: bacula-mysql
+bacula::manage_logwatch: false
+bacula::sqlite_package: bacula-sqlite3
+bacula::storage_mysql_package: bacula-storage
+bacula::director_postgresql_package: bacula-postgresql
+bacula::storage_postgresql_package: bacula-storage
+bacula::storage_sqlite_package: bacula-storage

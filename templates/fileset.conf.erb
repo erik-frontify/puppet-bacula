@@ -7,8 +7,10 @@ FileSet {
       Compression = GZIP
     }
 
+<% if @include_files -%>
 <% @include_files.each do |file_include| -%>
     File = <%= file_include %>
+<% end -%>
 <% end -%>
   }
 

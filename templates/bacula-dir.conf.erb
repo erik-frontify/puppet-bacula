@@ -1,21 +1,21 @@
 # DO NOT EDIT - Managed by Puppet
 #
 # Bacula Director Master Configuration
-#   for <%= @director_server_real %>
+#   for <%= @director_server %>
 
 # Define the name of this director so other clients can
 # connect to it and work with our system
 Director {
-  Name = "<%= @director_server_real -%>:director"
+  Name = "<%= @director_server -%>:director"
   Query File = "/etc/bacula/scripts/query.sql"
-  Working Directory = "/var/lib/bacula"
-  PID Directory = "/var/lib/bacula"
+  Working Directory = <%= @var_dir %>
+  PID Directory = <%= @var_dir %>
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>
 <% end -%>
   Maximum Concurrent Jobs = 5
   Password = "<%= @director_password -%>"
-  Messages = "<%= @director_server_real -%>:messages:daemon"
+  Messages = "<%= @director_server -%>:messages:daemon"
 <% if @use_tls -%>
   TLS Enable = yes
   TLS Require = <%= @tls_require ? 'yes':'no' %>
@@ -37,51 +37,42 @@ Director {
 # This is where the catalog information will be stored (basically
 # this should be how to connect to whatever database we're using)
 Catalog {
-  Name = "<%= @director_server_real -%>:<%= @db_backend -%>"
-  dbname = "<%= @db_database -%>"; dbdriver = dbi:<%= @db_backend %>
+  Name = "<%= @director_server -%>:<%= @db_backend -%>"
+  dbname = "<%= @db_database -%>"; dbdriver = <%= @db_driver %>
   <% if @db_backend != 'sqlite' -%>
-  dbaddress = <%= @db_host %>; dbport = <%= @db_port_real %>; user = <%= @db_user %>; password = <%= @db_password %>
+  dbaddress = <%= @db_host %>; dbport = <%= @db_port %>; user = <%= @db_user %>; password = <%= @db_password %>
   <% end -%>
 }
 
 # Configure how the directory will log and/or send messages. This
 # should should be for just about everything.
 Messages {
-  Name = "<%= @director_server_real -%>:messages:standard"
+  Name = "<%= @director_server -%>:messages:standard"
   Mail Command = "<%= @mail_command %>"
   Operator Command = "<%= @operator_command %>"
-<% if @mail_to_real -%>
-  Mail = <%= @mail_to_real -%> = all, !skipped
+<% if @mail_to -%>
+  Mail = <%= @mail_to -%> = all, !skipped
 <% end -%>
 <% if @mail_to_on_error -%>
   Mail On Error = <%= @mail_to_on_error -%> = all, !skipped
 <% end -%>
-  Operator = <%= @mail_to_operator_real -%> = mount
+  Operator = <%= @mail_to_operator -%> = mount
   Console = all, !skipped, !saved
   # WARNING! the following will create a file that you must cycle from
   #          time to time as it will grow indefinitely. However, it will
   #          also keep all your messages if they scroll off the console.
-  Append = "/var/log/bacula/<%= @director_server_real -%>:director.log" = all, !skipped
+  Append = "/var/log/bacula/<%= @director_server -%>:director.log" = all, !skipped
   Catalog = all
 }
 
 # These are messages directly from the various daemons themselves.
 Messages {
-  Name = "<%= @director_server_real -%>:messages:daemon"
+  Name = "<%= @director_server -%>:messages:daemon"
   Mail Command = "/usr/sbin/bsmtp -h localhost -f bacula@<%= scope.lookupvar('::fqdn') -%> -s \"Bacula Notice (from Director %d)\" %r"
-  Mail = <%= @mail_to_daemon_real -%> = all, !skipped
+  Mail = <%= @mail_to_daemon -%> = all, !skipped
   Console = all, !skipped, !saved
-  Append = "/var/log/bacula/<%= @director_server_real -%>:director.log" = all, !skipped
+  Append = "/var/log/bacula/<%= @director_server -%>:director.log" = all, !skipped
 }
-
-<% if @use_console -%>
-# Restricted console used by tray-monitor to get the status of the director
-Console {
-  Name = "<%= @director_server_real -%>:monitor:director"
-  Password = "<%= console_password -%>"
-  CommandACL = status, .status
-}
-<% end -%>
 
 # DEFAULT STORAGE SERVER ------------------------------------------------------
 # All the clients will define their own Storage Daemon configuration as they
@@ -90,8 +81,8 @@ Console {
 # Storage Daemon to connect to (using the standard FileStorage device) and a
 # Pool which will be used with that as well.
 Storage {
-  Name = "<%= @storage_server_real -%>:storage:default"
-  Address = <%= @storage_server_real %>
+  Name = "<%= @storage_server -%>:storage:default"
+  Address = <%= @storage_server %>
   Password = "<%= @director_password -%>"
   Device = "DefaultFileStorage"
   Media Type = File
@@ -110,14 +101,14 @@ Storage {
 }
 
 Pool {
-  Name = "<%= @storage_server_real -%>:pool:default"
+  Name = "<%= @storage_server -%>:pool:default"
   Pool Type = Backup
-  # Clean up any we don't need, and keep them for a maximum of <%= @volume_retention %>
-  # (in theory the same time period for weekly backups from the clients)
+  # Clean up any we don't need, and keep them for a maximum of a month (in
+  # theory the same time period for weekly backups from the clients)
   # Note the files for the old volumes will still remain on the disk but will
   # be truncated to a zero size.
   Recycle = yes
-  AutoPrune = <%= @volume_autoprune ? 'yes':'no' %>
+  Auto Prune = <%= @volume_autoprune ? 'yes':'no' %>
   Action On Purge = Truncate
   Volume Retention = <%= @volume_retention %>
   Job Retention = 1 year
@@ -129,7 +120,7 @@ Pool {
 }
 
 Pool {
-  Name = "<%= @storage_server_real -%>:pool:default.full"
+  Name = "<%= @storage_server -%>:pool:default.full"
   # All Volumes will have the format standard.date.time to ensure they
   # are kept unique throughout the operation and also aid quick analysis
   # We won't use a counter format for this at the moment.
@@ -139,7 +130,7 @@ Pool {
   # Note the files for the old volumes will still remain on the disk but will
   # be truncated to a zero size.
   Recycle = no
-  AutoPrune = <%= @volume_autoprune_full ? 'yes':'no' %>
+  Auto Prune = <%= @volume_autoprune_full ? 'yes':'no' %>
   Action On Purge = Truncate
   Volume Retention = <%= @volume_retention_full %>
   # Don't allow re-use of volumes; one volume per job only
@@ -157,7 +148,7 @@ Pool {
   # Note the files for the old volumes will still remain on the disk but will
   # be truncated to a zero size.
   Recycle = no
-  AutoPrune = <%= @volume_autoprune_diff ? 'yes':'no' %>
+  Auto Prune = <%= @volume_autoprune_diff ? 'yes':'no' %>
   Action On Purge = Truncate
   Volume Retention = <%= @volume_retention_diff %>
   # Don't allow re-use of volumes; one volume per job only
@@ -165,7 +156,7 @@ Pool {
 }
 
 Pool {
-  Name = "<%= @storage_server_real -%>:pool:default.incremental"
+  Name = "<%= @storage_server -%>:pool:default.incremental"
   # All Volumes will have the format standard.date.time to ensure they
   # are kept unique throughout the operation and also aid quick analysis
   # We won't use a counter format for this at the moment.
@@ -175,7 +166,7 @@ Pool {
   # Note the files for the old volumes will still remain on the disk but will
   # be truncated to a zero size.
   Recycle = no
-  AutoPrune = <%= @volume_autoprune_incr ? 'yes':'no' %>
+  Auto Prune = <%= @volume_autoprune_incr ? 'yes':'no' %>
   Action On Purge = Truncate
   Volume Retention = <%= @volume_retention_incr %>
   # Don't allow re-use of volumes; one volume per job only
@@ -183,15 +174,15 @@ Pool {
 }
 
 Pool {
-  Name = "<%= @storage_server_real -%>:pool:catalog"
+  Name = "<%= @storage_server -%>:pool:catalog"
   # All Volumes will have the format director.catalog.date.time to ensure they
   # are kept unique throughout the operation and also aid quick analysis
-  Label Format = "${Job}.<%= @director_server_real -%>.${Counter<%= @director_server_real.split('.')[0].capitalize -%>Catalog+:p/3/0/r}"
+  Label Format = "${Job}.<%= @director_server -%>.${Counter<%= @director_server.split('.')[0].capitalize -%>Catalog+:p/3/0/r}"
   Pool Type = Backup
   # Clean up any we don't need, and keep them for a maximum of a month (in
   # theory the same time period for weekly backups from the clients)
   Recycle = yes
-  AutoPrune = yes
+  Auto Prune = yes
   # We have no limit on the number of volumes, but we will simply set that
   # we should keep at least one weeks worth of backups of the database
   Volume Retention = 1 Week
@@ -201,9 +192,9 @@ Pool {
 
 # Create a Counter which will be used to label the catalog volumes on the system
 Counter {
-  Name    = "Counter<%= @director_server_real.split('.')[0].capitalize -%>Catalog"
+  Name    = "Counter<%= @director_server.split('.')[0].capitalize -%>Catalog"
   Minimum = 1
-  Catalog = "<%= @director_server_real -%>:<%= @db_backend %>"
+  Catalog = "<%= @director_server -%>:<%= @db_backend %>"
 }
 
 # FILE SETS -------------------------------------------------------------------
@@ -252,7 +243,7 @@ FileSet {
     File = /var/lib/postgresql
     File = /var/lib/ldap
     # Bacula's state files are no use to us on restore
-    File = /var/lib/bacula
+    File = <%= @var_dir %>
   }
 }
 
@@ -380,19 +371,25 @@ Schedule {
 Job {
   Name = "BackupCatalog"
   Type = Backup
-  Client = <%= @director_server_real %>
+  Client = <%= @director_server %>
   FileSet="Catalog"
   Schedule = "WeeklyCycleAfterBackup"
-  Storage = "<%= @storage_server_real -%>:storage:default"
-  Messages = "<%= @director_server_real -%>:messages:standard"
-  Pool = "<%= @storage_server_real -%>:pool:catalog"
+  Storage = "<%= @storage_server -%>:storage:default"
+  Messages = "<%= @director_server -%>:messages:standard"
+  Pool = "<%= @storage_server -%>:pool:catalog"
   # This creates an ASCII copy of the catalog
-  RunBeforeJob = "/usr/libexec/bacula/make_catalog_backup.pl <%= @director_server_real -%>:<%= @db_backend -%>"
+  RunBeforeJob = "/usr/libexec/bacula/make_catalog_backup.pl <%= @director_server -%>:<%= @db_backend -%>"
   # This deletes the copy of the catalog
   RunAfterJob  = "/usr/libexec/bacula/delete_catalog_backup"
-  Write Bootstrap = "/var/lib/bacula/BackupCatalog.bsr"
+  Write Bootstrap = "<%= @var_dir %>/BackupCatalog.bsr"
   # Run after main backup
   Priority = 50
+# This doesn't seem to be working correctly, disable for now.
+#  RunScript {
+#   RunsWhen=After
+#   RunsOnClient=no
+#   Console = "purge volume action=all allpools storage=File"
+#  }
 }
 <% end -%>
 
@@ -406,12 +403,12 @@ JobDefs {
   Level = Incremental
   FileSet = "Basic:<%= doHome -%>"
   Schedule = "Weekly:on<%= onDay -%>"
-  Messages = "<%= @director_server_real -%>:messages:standard"
+  Messages = "<%= @director_server -%>:messages:standard"
   # Set the job to work as standard with the default Pool & Storage
   # (this will be overridden by the Job configuration for each Client)
-  Storage = "<%= @storage_server_real -%>:storage:default"
-  Pool = "<%= @storage_server_real -%>:pool:default"
-  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+  Storage = "<%= @storage_server -%>:storage:default"
+  Pool = "<%= @storage_server -%>:pool:default"
+  Write Bootstrap = "<%= @var_dir %>/%c.bsr"
   Priority = 15
   # Define how long any of these jobs are allowed to run for before we should
   # kill them. Note that this is the run time (how long the actual backup is

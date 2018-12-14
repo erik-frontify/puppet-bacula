@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# All <tt>bacula+ classes are called from the main <tt>::bacula</tt> class.  Parameters
+# All <tt>bacula+ classes are called from the main <tt>bacula</tt> class.  Parameters
 # are documented there.
 #
 # === Actions:
@@ -16,8 +16,7 @@
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
-# Copyright 2017 Dart Container
+# Copyright 2018 Michael Watters
 #
 # === License
 #
@@ -32,54 +31,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::storage (
-  $console_password      = '',
-  $db_backend            = 'sqlite',
-  $director_password     = '',
-  $director_server       = undef,
-  $plugin_dir            = undef,
-  $storage_default_mount = '/mnt/bacula',
-  $storage_server        = undef,
-  $storage_template      = 'bacula/bacula-sd.conf.erb',
-  $tls_allowed_cn        = [],
-  $tls_ca_cert           = undef,
-  $tls_ca_cert_dir       = undef,
-  $tls_cert              = undef,
-  $tls_key               = undef,
-  $tls_require           = true,
-  $tls_verify_peer       = true,
-  $use_tls               = false,
-  $block_checksum        = true
-) {
-  include ::bacula::params
+  String $console_password              = cache_data('bacula', 'console_password', extlib::random_password(32)),
+  String $db_backend                    = 'sqlite',
+  String $director_password             = cache_data('bacula', 'director_password', extlib::random_password(32)),
+  String $director_server               = $facts['fqdn'],
+  Optional[String] $plugin_dir          = '/usr/lib64/bacula',
+  String $storage_default_mount         = '/mnt/bacula',
+  String $storage_server                = $director_server,
+  String $storage_package               = 'bacula-storage',
+  String $storage_template              = 'bacula/bacula-sd.conf.erb',
+  Array[String] $tls_allowed_cn         = [],
+  String $tls_ca_cert                   = '/var/lib/bacula/ssl/certs/ca.pem',
+  Optional[String] $tls_ca_cert_dir     = undef,
+  String $tls_cert                       = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
+  String $tls_key                        = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
+  Boolean $tls_require                  = true,
+  Boolean $tls_verify_peer              = true,
+  Boolean $use_tls                      = true,
+  Boolean $block_checksum               = true,
+  String $var_dir                       = '/var/lib/bacula',
+  ) {
 
-  $director_server_real = $director_server ? {
-    undef   => $::bacula::params::director_server_default,
-    default => $director_server,
-  }
-  $storage_server_real  = $storage_server ? {
-    undef   => $::bacula::params::storage_server_default,
-    default => $storage_server,
-  }
+  include 'bacula::common'
 
-  # This is necessary because the bacula-common package will
-  # install the bacula-storage-mysql package regardless of
-  # wheter we're installing the bacula-storage-sqlite package
-  # This causes the bacula storage daemon to use mysql no
-  # matter what db backend we want to use.
-  #
-  # However, if we install only the db compoenent package,
-  # it will install the bacula-common package without
-  # necessarily installing the bacula-storage-mysql package
-  $db_package           = $db_backend ? {
-    'mysql'      => $::bacula::params::storage_mysql_package,
-    'postgresql' => $::bacula::params::storage_postgresql_package,
-    default      => $::bacula::params::storage_sqlite_package,
-  }
-
-  package { $db_package:
-    ensure => present,
+  package { $storage_package:
+    ensure => installed,
   }
 
   file { [$storage_default_mount, "${storage_default_mount}/default"]:
@@ -87,14 +65,11 @@ class bacula::storage (
     owner   => 'bacula',
     group   => 'bacula',
     mode    => '0755',
-    seltype => $::osfamily ? {
-        'RedHat' => 'bacula_store_t',
-        default  => undef,
-    },
-    require => Package[$db_package],
+    seltype => 'bacula_store_t',
+    require => Package[$storage_package],
   }
 
-  if $facts['selinux'] {
+  if $facts['osfamily'] == 'RedHat' and $facts['selinux'] {
     selinux::fcontext { "${storage_default_mount}(/.*)?":
       seltype => 'bacula_store_t',
     }
@@ -105,7 +80,7 @@ class bacula::storage (
     owner   => 'bacula',
     group   => 'bacula',
     mode    => '0750',
-    require => Package[$db_package],
+    require => Package[$storage_package],
   }
 
   file { '/etc/bacula/bacula-sd.d/empty.conf':

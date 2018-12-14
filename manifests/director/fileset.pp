@@ -9,9 +9,11 @@
 # [*ensure*]
 #   Ensure the file is present or absent.  The only valid values are <tt>file</tt> or
 #   <tt>absent+. Defaults to <tt>file</tt>.
+#
 # [*exclude_files*]
 #   An array of strings consisting of one file or directory name per entry. Directory names should be specified without
 #   a trailing slash with Unix path notation.
+#
 # [*include_files*]
 #   *Required*: An array of strings consisting of one file or directory name per entry. Directory names should be specified without
 #   a trailing slash with Unix path notation.
@@ -24,6 +26,7 @@
 #     '/var/log/servicename',
 #     '/var/spool/servicename',
 #   ]
+#
 #   $servicename_exclude_files = [
 #     '/var/lib/servicename/tmp'
 #   ]
@@ -33,20 +36,18 @@
 #     include_files => $servicename_include_files,
 #     exclude_files => $servicename_exclude_files,
 #   }
-#
+
 define bacula::director::fileset (
-  $ensure   = 'file',
-  $exclude_files = undef,
-  $include_files = undef,
-  $enable_vss = false,
+  String $ensure = 'file',
+  Array[String] $exclude_files,
+  Array[String] $include_files,
+  Boolean $enable_vss = false,
   ) {
 
-  if !($ensure in ['file', 'absent']) {
-    fail('The only valid values for the ensure parameter are file or absent')
-  }
+  include 'bacula::director'
 
   file { "/etc/bacula/bacula-dir.d/fileset-${name}.conf":
-    ensure  => file,
+    ensure  => $ensure,
     owner   => 'bacula',
     group   => 'bacula',
     mode    => '0640',

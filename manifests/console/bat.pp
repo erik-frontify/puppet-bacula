@@ -1,23 +1,24 @@
 # == Class: bacula::console::bat
 #
-# This class installs the BAT (Bacula Admin Tool) application for QT supported
-# systems
+# This class installs the BAT (Bacula Admin Tool) package
 #
 # === Parameters
 #
-# None
+# [*package*]
+#  The name of the package that provides the bat tool.
 #
 # === Actions:
-# * Enforce the BAT system package is installed
-# * Enforce <tt>/etc/bacula/bat.conf</tt> points to <tt>/etc/bacula/bconsole.conf</tt>
+#
+# * Ensure the BAT package is installed
+# * Ensure <tt>/etc/bacula/bat.conf</tt> points to <tt>/etc/bacula/bconsole.conf</tt>
 #
 # === Sample Usage:
 #
-#  class { '::bacula::console::bat': }
+#  include 'bacula::console::bat'
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -32,21 +33,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-class bacula::console::bat {
-  Class['::bacula::console'] -> Class['::bacula::console::bat']
-  include ::bacula::params
 
-  package { $::bacula::params::bat_console_package:
-    ensure  => present,
+class bacula::console::bat (
+  String $package = 'bacula-console-bat',
+  ) {
+
+  package { $package:
+    ensure => present,
   }
 
   file { '/etc/bacula/bat.conf':
     ensure  => 'symlink',
-    target  => 'bconsole.conf',
-    require => [
-      Package[$::bacula::params::bat_console_package],
-      File['/etc/bacula/bconsole.conf'],
-    ],
+    target  => '/etc/bacula/bconsole.conf',
+    require => Package[$package],
   }
 }

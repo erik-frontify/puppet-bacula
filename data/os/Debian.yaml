@@ -1,0 +1,10 @@
+
+bacula::bat_console_package: 'bacula-console-qt',
+bacula::director_service: bacula-director
+bacula::manage_logwatch: false
+bacula::sqlite_package: bacula-director-sqlite
+bacula::director_mysql_package: bacula-director-mysql
+bacula::director_postgresql_package: 'bacula-director-postgresql'
+bacula::storage_mysql_package: bacula-sd-mysql
+bacula::storage_postgresql_package: bacula-sd-pgsql
+bacula::storage_sqlite_package: bacula-sd-sqlite

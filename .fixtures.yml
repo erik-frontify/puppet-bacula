@@ -1,0 +1,13 @@
+fixtures:
+    symlinks:
+      bacula: "#{source_dir}"
+    forge_modules:
+      'concat':       'puppetlabs/concat'
+      'extlib':       'puppet/extlib'
+      'firewall':     'puppetlabs/firewall'
+      'mysql':        'puppetlabs/mysql'
+      'postgresql':   'puppetlabs/postgresql'
+      'selinux':      'puppet/selinux'
+      'stdlib':       'puppetlabs/stdlib'
+      'sqlite':       'puppetlabs/sqlite'
+      'zypprepo':     'puppet/zypprepo'

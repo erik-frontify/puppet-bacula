@@ -14,7 +14,7 @@
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -29,28 +29,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::common (
-  $db_backend        = 'sqlite',
-  $db_database       = 'bacula',
-  $db_host           = 'localhost',
-  $db_password       = '',
-  $db_port           = '3306',
-  $db_user           = '',
-  $is_client         = true,
-  $is_director       = false,
-  $is_storage        = false,
-  $manage_bat        = false,
-  $manage_console    = false,
-  $manage_config_dir = false,
-  $manage_db_tables  = true,
-  $packages          = undef,
-  $plugin_dir        = undef
-) {
-  include ::bacula::params
+  Boolean $manage_config_dir = false,
+  Boolean $manage_db_tables  = true,
+  String $plugin_dir         = '/usr/lib64/bacula',
+  ) {
 
   if $facts['operatingsystem'] =~ /(?i:opensuse)/ {
-    $dist_name = regsubst($::lsbdistdescription, ' ', '_', 'G')
+    $dist_name = regsubst($facts['lsbdistdescription'], ' ', '_', 'G')
     $baseurl = "http://download.opensuse.org/repositories/home:/Ximi1970:/openSUSE:/Extra/${dist_name}"
 
     zypprepo { 'home_Ximi1970_openSUSE_Extra':
@@ -82,148 +69,61 @@ class bacula::common (
     }
   }
 
-  if $packages {
-    $packages_notify = $manage_db_tables ? {
-      true    => Exec['make_db_tables'],
-      default => undef,
-    }
-
-    package { $packages:
-      ensure => installed,
-      notify => $packages_notify,
-    }
-  }
-
-  # The user and group are actually created by installing the bacula-common
-  # package which is pulled in when any other bacula package is installed.
-  # To work around the issue where every package resource is a separate run of
-  # yum we add requires for the packages we already have to the group resource.
-  if $is_client == true {
-    $require_package = $::bacula::params::client_package
-  } elsif $is_director {
-    $require_package = $::bacula::director::db_package
-  } elsif $is_storage {
-    $require_package = $::bacula::storage::db_package
-  } elsif $manage_console {
-    $require_package = $::bacula::params::console_package
-  } elsif $manage_bat {
-    $require_package = $::bacula::params::bat_console_package
-  }
-
-  if $plugin_dir {
-    file { $plugin_dir:
-      ensure => directory,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-    }
-  }
-
   # Specify the user and group are present before we create files.
-  case $operatingsystem {
-    # disable user/group creation on windows
-    windows: {}
+  #group { 'bacula':
+  #  ensure => present,
+  #}
 
-    default: {
-       group { 'bacula':
-         ensure  => present,
-         require => Package[$require_package]
-       }
-
-       user { 'bacula':
-         ensure  => present,
-         gid     => 'bacula',
-         require => Group['bacula'],
-       }
-    }
-  }
+  #user { 'bacula':
+  #  ensure  => present,
+  #  gid     => 'bacula',
+  #  require => Group['bacula'],
+  #}
 
   $config_dir_source = $manage_config_dir ? {
     true    => 'puppet:///modules/bacula/bacula-empty.dir',
     default => undef,
   }
 
-  file { '/etc/bacula':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula',
-      default  => '/etc/bacula',
-    },
-    ensure  => directory,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    mode    => $operatingsystem ? { windows => '0777', default => '0750'},
-    purge   => $manage_config_dir,
-    force   => $manage_config_dir,
-    recurse => $manage_config_dir,
-    source  => $config_dir_source,
-    require => Package[$require_package],
-  }
+  file {
+    default:
+        ensure  => directory,
+        owner   => 'bacula',
+        group   => 'bacula',
+    ;
 
-# This is necessary to prevent the object above from deleting the supplied scripts
-  file { '/etc/bacula/scripts':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula/scripts',
-      default  => '/etc/bacula/scripts',
-    },
-    ensure  => directory,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    require => Package[$require_package],
-  }
+    $plugin_dir:
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    ;
 
-  # To avoid SELinux denials this directory must belong to the root group.
-  # See https://danwalsh.livejournal.com/69478.html for more details on
-  # the root cause of this failure
-  file { '/var/lib/bacula':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula/lib',
-      default  => '/var/lib/bacula',
-    },
-    ensure  => directory,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    mode    => '0775',
-    require => Package[$require_package],
-  }
+    '/etc/bacula':
+        mode    => '0750',
+        purge   => $manage_config_dir,
+        force   => $manage_config_dir,
+        recurse => $manage_config_dir,
+        source  => $config_dir_source,
+    ;
 
-  file { '/var/spool/bacula':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula/spool',
-      default  => '/var/spool/bacula',
-    },
-    ensure  => directory,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    mode    => $operatingsystem ? { windows => '0775', default => '0755'},
-    require => Package[$require_package],
-  }
+    # This is necessary to prevent the object above from deleting the supplied scripts
+    '/etc/bacula/scripts':
+    ;
 
-  file { '/var/log/bacula':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula/log',
-      default  => '/var/log/bacula',
-    },
-    ensure  => directory,
-    recurse => true,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    mode    => $operatingsystem ? { windows => '0775', default => '0755'},
-    require => Package[$require_package],
-  }
+    # To avoid SELinux denials this directory must belong to the root group.
+    # See https://danwalsh.livejournal.com/69478.html for more details on
+    # the root cause of this failure
+    '/var/lib/bacula':
+        mode    => '0775',
+    ;
 
-  file { '/var/run/bacula':
-    name    => $operatingsystem ? {
-      windows  => 'C:/ProgramData/bacula/run',
-      default  => '/var/run/bacula',
-    },
-    ensure  => directory,
-    owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
-    group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
-    mode    => $operatingsystem ? { windows => '0775', default => '0755'},
-    seltype => $::osfamily ? {
-        'RedHat' => 'bacula_var_run_t',
-        default  => undef,
-    },
-    require => Package[$require_package],
+    '/var/spool/bacula':
+        mode    => '0755',
+    ;
+
+    '/var/log/bacula':
+        recurse => true,
+        mode    => '0755',
+    ;
   }
 }

@@ -1,13 +1,13 @@
 # DO NOT EDIT - Managed by Puppet
 #
 # Bacula Storage Daemon Configuration
-#   for <%= @storage_server_real %>
-#   via <%= @director_server_real -%>:director (<%= @director_server_real -%>)
+#   for <%= @storage_server %>
+#   via <%= @director_server -%>:director (<%= @director_server -%>)
 
 # Configure the Director which will manage this Storage Daemon, and the
 # Director through which we'll send our messages (will be the same) one.
 Director {
-  Name = "<%= @director_server_real -%>:director"
+  Name = "<%= @director_server -%>:director"
   Password = "<%= @director_password -%>"
 <% if @use_tls -%>
   TLS Enable = yes
@@ -30,15 +30,15 @@ Director {
 }
 
 Messages {
-  Name = "<%= @storage_server_real -%>:messages:standard"
-  Director = "<%= @director_server_real -%>:director" = all
+  Name = "<%= @storage_server -%>:messages:standard"
+  Director = "<%= @director_server -%>:director" = all
 }
 
 # Configure the basic details for the Storage Daemon on this server
 Storage {
-  Name = "<%= @storage_server_real -%>:storage"
-  Working Directory = "/var/lib/bacula"
-  PID Directory = "/var/lib/bacula"
+  Name = "<%= @storage_server -%>:storage"
+  Working Directory = "<%= @var_dir %>"
+  PID Directory = "<%= @var_dir %>"
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>
 <% end -%>
@@ -66,12 +66,12 @@ Storage {
 
 # Also configure access for something to monitor this Storage Daemon
 Director {
-  Name = "<%= @storage_server_real -%>:monitor:storage"
+  Name = "<%= @storage_server -%>:monitor:storage"
   Password = "<%= @console_password -%>"
   Monitor = yes
 }
 
-# Not configure the default Device this Storage Daemon will provide
+# not configure the default Device this Storage Daemon will provide
 Device {
   Name = "DefaultFileStorage"
   Media Type = File

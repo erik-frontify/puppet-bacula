@@ -23,16 +23,15 @@
 #     ensure => file,
 #     source => 'puppet:///modules/my_bacula/custom.conf'
 #   }
-#
+
 define bacula::director::custom_config (
-  $ensure   = 'file',
-  $director_server = undef,
-  $content  = undef,
-  $source   = undef
-) {
-  if !($ensure in ['file', 'absent']) {
-    fail('The only valid values for the ensure parameter are file or absent')
-  }
+  String $ensure = 'file',
+  String $director_server = $facts['fqdn'],
+  Optional[String] $content  = undef,
+  Optional[String] $source   = undef
+  ) {
+
+  include 'bacula::director'
 
   if $content and $source {
     fail('You may not supply both content and source parameters')

@@ -1,0 +1,6 @@
+---
+bacula::console::package: bacula-console
+bacula::console::bat::package: bacula-console-bat
+bacula::client::client_package: bacula-client
+
+bacula::storage::storage_package: bacula-storage

@@ -1,3 +1,6 @@
+2019-10-07  Michael Watters <wattersm@watters.ws> - 2.0.1
+  * Rewrite module to use hiera data provider
+
 2015-09-07  Russell Harrison  <rharrison@fedoraproject.org> - 0.6.1
   * Minor changes to resolve automated code quality checks on the forge.
 

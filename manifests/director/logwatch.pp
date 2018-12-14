@@ -5,12 +5,12 @@
 #
 # === Parameters
 #
-# All <tt>bacula</tt> classes are called from the main <tt>::bacula</tt> class.  Parameters
+# All <tt>bacula</tt> classes are called from the main <tt>bacula</tt> class.  Parameters
 # are documented there.
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -25,11 +25,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::director::logwatch (
-  $logwatch_enabled = true
-) {
-  Class['::bacula::director'] -> Class['::bacula::director::logwatch']
+  Boolean $logwatch_enabled = true
+  ) {
 
   $config_ensure = $logwatch_enabled ? {
     false   => absent,

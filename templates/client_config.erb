@@ -1,11 +1,11 @@
 Client {
   Name     = "<%= @name %>"
   Address  = "<%= @name %>"
-  Password = "<%= @director_password_real %>"
-  Catalog  = "<%= @director_server_real %>:<%= @db_backend_real %>"
+  Password = "<%= @director_password %>"
+  Catalog  = "<%= @director_server %>:<%= @db_backend %>"
   File Retention = 12 Weeks
   Job Retention  = 1 Year
-  AutoPrune = yes
+  Auto Prune = yes
 <% if @use_tls -%>
   TLS Enable = yes
   TLS Require = <%= @tls_require ? 'yes':'no' %>
@@ -27,7 +27,7 @@ Job {
   Name     = "<%= @name %>"
   Client   = "<%= @name %>"
   Type     = Backup
-  Enabled  = <%= @backup_enable ? 'yes':'no' %>
+  Enabled  = "<%= @backup_enable ? 'yes':'no' %>"
 <%- if @priority -%>
   Priority = <%= @priority %>
 <%- end -%>
@@ -36,17 +36,17 @@ Job {
   Base     = "<%= @base %>"
   Accurate = yes
 <% end -%>
-  Storage  = "<%= @storage_server_real %>:storage:<%= @pool %>"
+  Storage  = "<%= @storage_server %>:storage:<%= @pool %>"
   Spool Attributes = yes
 <% if @maximum_bandwidth -%>
   Maximum Bandwidth = <%= @maximum_bandwidth %>
 <% end -%>
   Schedule = "<%= @client_schedule %>"
-  Pool     = "<%= @storage_server_real %>:pool:<%= @pool %>"
-  Messages = "<%= @director_server_real %>:messages:standard"
-  Rerun Failed Levels = <%= @rerun_failed_levels ? 'yes':'no' %>
-<% if @run_scripts_real -%>
-  <%- @run_scripts_real.each do |runscript| -%>
+  Pool     = "<%= @storage_server %>:pool:<%= @pool %>"
+  Messages = "<%= @director_server %>:messages:standard"
+  Rerun Failed Levels = <%= @rerun_failed_levels  ? 'yes':'no' %>
+<% if @run_scripts -%>
+  <%- @run_scripts.each do |runscript| -%>
   RunScript {
     RunsWhen       = <%= runscript['RunsWhen'] %>
     <%- if runscript['RunsOnSuccess'] -%>
@@ -77,11 +77,11 @@ Job {
   Name     = "<%= @name %> Restore"
   Client   = "<%= @name %>"
   Type     = Restore
-  Enabled  = <%= @restore_enable ? 'yes':'no' %>
+  Enabled  = "<%= @restore_enable ? 'yes':'no' %>"
   FileSet  = "<%= @fileset %>"
-  Storage  = "<%= @storage_server_real %>:storage:<%= @pool %>"
-  Pool     = "<%= @storage_server_real %>:pool:<%= @pool %>"
-  Messages = "<%= @director_server_real %>:messages:standard"
+  Storage  = "<%= @storage_server %>:storage:<%= @pool %>"
+  Pool     = "<%= @storage_server %>:pool:<%= @pool %>"
+  Messages = "<%= @director_server %>:messages:standard"
   Where    = <%= @restore_where %>
 }
 <%- end -%>

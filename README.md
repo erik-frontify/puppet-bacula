@@ -7,7 +7,7 @@ Author: Russell Harrison <rharrison@fedoraproject.org>
 Copyright (c) 2012-2013, Russell Harrison
 
 Author: Michael Watters <wattersm@watters.ws>
-Copyright (c) 2018, Michael Watters
+Copyright (c) 2019, Michael Watters
 
 # About
 
@@ -77,7 +77,6 @@ Declaration example:
     is_director       => true,
     is_storage        => true,
     mail_to           => 'bacula-admin@example.com',
-    manage_console    => true,
     storage_server    => 'bacula.example.com',
   }
 ```
@@ -169,10 +168,6 @@ Whether the bat should be managed on the node
 ### manage_config_dir
 
 Whether to purge all non-managed files from the bacula config directory
-
-### manage_console
-
-Whether the `bconsole` should be managed on the node
 
 ### manage_db
 
@@ -269,10 +264,6 @@ x509 certificate. Any client certificate signed by a known-CA will be accepted
 unless the `TLS Allowed CN` configuration directive is used, in which case the
 client certificate must correspond to the Allowed Common Name specified.
 Valid values are `true` or `false`.
-
-### use_console
-
-Whether to configure a console resource on the director
 
 ### use_tls
 

@@ -14,7 +14,7 @@
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -29,54 +29,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::client (
-  $director_password = '',
-  $director_server   = undef,
-  $plugin_dir        = undef,
-  $tls_allowed_cn    = [],
-  $tls_ca_cert       = undef,
-  $tls_ca_cert_dir   = undef,
-  $tls_cert          = undef,
-  $tls_key           = undef,
-  $tls_require       = true,
-  $tls_verify_peer   = true,
-  $use_tls           = false
+  String $bacula_fd_conf            = '/etc/bacula/bacula-fd.conf',
+  String $client_package            = 'bacula-client',
+  String $director_password         = cache_data('bacula', 'director_password', extlib::random_password(32)),
+  String $director_server           = "bacula.${facts['domain']}",
+  String $plugin_dir                = '/usr/lib64/bacula',
+  Array[String] $tls_allowed_cn     = [],
+  String $tls_ca_cert               = '/var/lib/bacula/ssl/certs/ca.pem',
+  String $tls_key                   = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
+  String $tls_cert                  = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
+  Optional[String] $tls_ca_cert_dir = undef,
+  Boolean $tls_require              = true,
+  Boolean $tls_verify_peer          = true,
+  Boolean $use_tls                  = true,
+  String $var_dir                   = '/var/lib/bacula',
   ) {
 
-  include ::bacula::params
+  include 'bacula::common'
 
-  $var_dir = $::operatingsystem ? {
-    /(?i:windows)/    => 'C:/ProgramData/Bacula',
-    default           => '/var/lib/bacula',
+  package { $client_package:
+    ensure => installed,
   }
 
-  $director_server_real = $director_server ? {
-    undef   => $::bacula::params::director_server_default,
-    default => $director_server,
-  }
-
-  package { $bacula::params::client_package:
-    ensure => present,
-  }
-
-  $file_requires = $plugin_dir ? {
-    undef   => File['/etc/bacula'],
-    default => File['/var/lib/bacula', $plugin_dir]
-  }
-
-  $bacula_fd_conf = $::operatingsystem ? {
-    /(?i:CentOS|Fedora|openSUSE|SLES)/ => '/etc/bacula/bacula-fd.conf',
-    /(?i:windows)/ => 'C:/Program Files/bacula/bacula-fd.conf',
-  }
+  $file_requires = File['/var/lib/bacula', $plugin_dir]
 
   file { $bacula_fd_conf:
     ensure    => file,
-    owner     => $operatingsystem ? { windows => 'Administrator', default => 'root'},
-    group     => $operatingsystem ? { windows => 'Administrators', default => 'root'},
-    mode      => '0644',
+    owner     => 'root',
+    group     => 'root',
+    mode      => '0640',
     content   => template('bacula/bacula-fd.conf.erb'),
-    require   => [ Package[$bacula::params::client_package], $file_requires, ],
+    require   => [ Package[$client_package], $file_requires, ],
     notify    => Service['bacula-fd'],
     show_diff => false,
   }

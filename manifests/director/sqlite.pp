@@ -9,7 +9,7 @@
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2018 Michael Watters
 #
 # === License
 #
@@ -24,10 +24,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::director::sqlite (
-  $db_database = 'bacula'
-) {
+  String $db_database = 'bacula',
+  String $db_package  = 'bacula-storage-sqlite',
+  ) {
+
+  include 'bacula::common'
+
+  package { $db_package:
+    ensure => installed,
+  }
+
   sqlite::db { $db_database:
     ensure   => present,
     location => "/var/lib/bacula/${db_database}.db",
@@ -37,20 +45,21 @@ class bacula::director::sqlite (
     notify   => Exec['make_db_tables'],
   }
 
-  file { '/usr/local/libexec/bacula':
-    ensure => directory,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-  }
+  file {
+    default:
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    ;
 
-  file { '/usr/local/libexec/bacula/make_sqlite3_tables.sh':
-    ensure  => file,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    content => template('bacula/make_sqlite3_tables.sh.erb'),
-    require => Package[$::bacula::params::director_sqlite_package],
+    '/usr/local/libexec/bacula':
+        ensure => directory,
+    ;
+
+    '/usr/local/libexec/bacula/make_sqlite3_tables.sh':
+        content => template('bacula/make_sqlite3_tables.sh.erb'),
+        require => Package[$db_package],
+    ;
   }
 
   $make_db_tables_command = $::operatingsystem ? {
@@ -62,6 +71,5 @@ class bacula::director::sqlite (
     command     => $make_db_tables_command,
     refreshonly => true,
     require     => File['/usr/local/libexec/bacula/make_sqlite3_tables.sh'],
-    before      => Service['bacula-dir'],
   }
 }

@@ -9,7 +9,7 @@
 #
 # === Copyright
 #
-# Copyright 2012 Russell Harrison
+# Copyright 2018 Michael Watters
 #
 # === License
 #
@@ -24,27 +24,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 class bacula::console (
-  $console_template  = 'bacula/bconsole.conf.erb',
-  $director_password = '',
-  $director_server   = undef,
-  $tls_ca_cert       = undef,
-  $tls_ca_cert_dir   = undef,
-  $tls_cert          = undef,
-  $tls_key           = undef,
-  $tls_require       = true,
-  $tls_verify_peer   = true,
-  $use_tls           = false
-) {
-  include ::bacula::params
+  String $console_template          = 'bacula/bconsole.conf.erb',
+  String $director_password         = cache_data('bacula', 'director_password', extlib::random_password(32)),
+  String $director_server           = $facts['fqdn'],
+  String $tls_ca_cert               = '/var/lib/bacula/ssl/certs/ca.pem',
+  Optional[String] $tls_ca_cert_dir = undef,
+  String $tls_cert                  = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
+  String $tls_key                   = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
+  Boolean $tls_require              = true,
+  Boolean $tls_verify_peer          = true,
+  Boolean $use_tls                  = true,
+  String $package                   = 'bacula-console',
+  ) {
 
-  $director_server_real = $director_server ? {
-    undef   => $::bacula::params::director_server_default,
-    default => $director_server,
-  }
-
-  package { $::bacula::params::console_package:
+  package { $package:
     ensure => present,
   }
 
@@ -54,7 +49,17 @@ class bacula::console (
     group     => 'bacula',
     mode      => '0640',
     content   => template($console_template),
-    require   => Package[$::bacula::params::console_package],
+    require   => Package[$package],
     show_diff => false,
+  }
+
+  # Instead of restarting the <code>bacula-dir</code> service which could interrupt running jobs tell the director to reload its
+  # configuration.
+  exec { 'bacula-dir reload':
+    command     => '/bin/echo reload | /usr/sbin/bconsole',
+    logoutput   => on_failure,
+    refreshonly => true,
+    timeout     => 10,
+    require     => Package[$package],
   }
 }

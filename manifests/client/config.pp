@@ -7,31 +7,45 @@
 # [*ensure*]
 #   If the configuration should be deployed to the director. <code>file</code> (default), <code>present</code>, or
 #   <code>absent</code>.
+#
 # [*backup_enable*]
 #   If the backup job for the client should be enabled <code>true</code> (default) or <code>false</code>.
+#
 # [*client_schedule*]
 #   The schedule for backups to be performed.
+#
 # [*db_backend*]
 #   The database backend of the catalog storing information about the backup
+#
 # [*director_password*]
 #   The director's password the client is connecting to.
+#
 # [*director_server*]
 #   The FQDN of the director server the client will connect to.
+#
 # [*fileset*]
 #   The file set used by the client for backups
 # [*base*]
 #   The job to use as a base.  Default to undef.
+#
 # [*pool*]
 #   The pool used by the client for backups
+#
 # [*pool_diff*]
 #   The pool to use for differential backups. Setting this to <code>false</code> will prevent configuring a specific pool for
 #   differential backups. Defaults to <code>"${pool}.differential"</code>.
+#
 # [*pool_full*]
 #   The pool to use for full backups. Setting this to <code>false</code> will prevent configuring a specific pool for full backups.
 #   Defaults to <code>"${pool}.full"</code>.
+#
 # [*pool_incr*]
 #   The pool to use for incremental backups. Setting this to <code>false</code> will prevent configuring a specific pool for
 #   incremental backups. Defaults to <code>"${pool}.incremental"</code>.
+#
+# [*maximum_bandwidth*]
+#   Bandwidth limit for the bacula file director.  This can be used to prevent bacula from saturating network interfaces.
+#
 # [*priority*]
 #   This directive permits you to control the order in which your jobs will be run by specifying a positive non-zero number. The
 #   higher the number, the lower the job priority. Assuming you are not running concurrent jobs, all queued jobs of priority
@@ -40,6 +54,7 @@
 #   priority <code>2</code> are already running, and a new job is scheduled with priority <code>1</code>, the currently running
 #   priority <code>2</code> jobs must complete before the priority <code>1</code> job is run, unless <code>Allow Mixed
 #   Priority</code> is set. The default priority is <code>10</code>.
+#
 # [*rerun_failed_levels*]
 #   If this directive is set to <code>true</code> (default <code>false</code>), and Bacula detects that a previous job at a higher
 #   level (i.e. Full or Differential) has failed, the current job level will be upgraded to the higher level. This is particularly
@@ -48,33 +63,42 @@
 #   this directive: first, a failed job is defined as one that has not terminated normally, which includes any running job of the
 #   same name (you need to ensure that two jobs of the same name do not run simultaneously); secondly, the Ignore FileSet Changes
 #   directive is not considered when checking for failed levels, which means that any FileSet change will trigger a rerun.
+#
 # [*restore_enable*]
 #   If the restore job for the client should be enabled <code>true</code> (default) or <code>false</code>.
+#
 # [*restore_where*]
 #   The default path to restore files to defined in the restore job for this client.
+#
 # [*run_scripts*]
 #   An array of hashes containing the parameters for any
 #   {RunScripts}[http://www.bacula.org/5.0.x-manuals/en/main/main/Configuring_Director.html#6971] to include in the backup job
 #   definition. For each hash in the array a <code>RunScript</code> directive block will be inserted with the
 #   <code>key = value</code> settings from the hash.  Note: The <code>RunsWhen</code> key is required.
+#
 # [*storage_server*]
 #   The storage server hosting the pool this client will backup to
+#
 # [*tls_ca_cert_dir*]
 #   Full path to TLS CA certificate directory. In the current implementation, certificates must be stored PEM
 #   encoded with OpenSSL-compatible hashes, which is the subject name's hash and an extension of .0. One of
 #   <tt>TLS CA Certificate File</tt> or <tt>TLS CA Certificate Dir</tt> are required in a server context if <tt>TLS Verify Peer</tt>
 #   is also specified, and are always required in a client context.
+#
 # [*tls_ca_cert*]
 #   The full path and filename specifying a PEM encoded TLS CA certificate(s). Multiple certificates are permitted in
 #   the file. One of <code>TLS CA Certificate File</code> or <code>TLS CA Certificate Dir</code> are required in a server context if
 #   <code>TLS Verify Peer</code> is also specified, and are always required in a client context.
+#
 # [*tls_cert*]
 #   The full path and filename of a PEM encoded TLS certificate. It can be used as either a client or server
 #   certificate. PEM stands for Privacy Enhanced Mail, but in this context refers to how the certificates are
 #   encoded. It is used because PEM files are base64 encoded and hence ASCII text based rather than binary. They may
 #   also contain encrypted information.
+#
 # [*tls_key*]
 #   The full path and filename of a PEM encoded TLS private key. It must correspond to the TLS certificate.
+#
 # [*use_tls*]
 #   Whether to use {Bacula TLS - Communications
 #   Encryption}[http://www.bacula.org/en/dev-manual/main/main/Bacula_TLS_Communications.html].
@@ -94,7 +118,7 @@
 #
 # === Copyright
 #
-# Copyright 2012-2013 Russell Harrison
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -109,135 +133,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 define bacula::client::config (
-  $ensure              = file,
-  $backup_enable       = true,
-  $client_schedule     = 'WeeklyCycle',
-  $db_backend          = undef,
-  $director_password   = '',
-  $director_server     = undef,
-  $fileset             = 'Basic:noHome',
-  $base                = undef,
-  $pool                = 'default',
-  $pool_diff           = undef,
-  $pool_full           = undef,
-  $pool_incr           = undef,
-  $maximum_bandwidth   = undef,
-  $priority            = undef,
-  $rerun_failed_levels = false,
-  $restore_enable      = true,
-  $restore_where       = '/var/tmp/bacula-restores',
-  $run_scripts         = undef,
-  $storage_server      = undef,
-  $tls_allowed_cn    = [],
-  $tls_ca_cert       = undef,
-  $tls_ca_cert_dir   = undef,
-  $tls_cert          = undef,
-  $tls_key           = undef,
-  $tls_require       = true,
-  $tls_verify_peer   = true,
-  $use_tls           = false,
-) {
-  include ::bacula::params
+  String $ensure = file,
+  Boolean $backup_enable = true,
+  String $client_schedule               = 'WeeklyCycle',
+  String $db_backend                    = 'sqlite',
+  String $db_password                   = cache_data('bacula', 'db_password', extlib::random_password(32)),
+  String $director_password             = cache_data('bacula', 'director_password', extlib::random_password(32)),
+  String $director_server               = "bacula.${facts['domain']}",
+  String $fileset                       = 'Basic:noHome',
+  Optional[String] $base                = undef,
+  String $pool                          = 'default',
+  Optional[String] $pool_diff           = "${pool}.differential",
+  Optional[String] $pool_full           = "${pool}.full",
+  Optional[String] $pool_incr           = "${pool}.incr",
+  Optional[String] $maximum_bandwidth   = undef,
+  Optional[String] $priority            = undef,
+  Boolean $rerun_failed_levels          = false,
+  Boolean $restore_enable               = true,
+  String $restore_where                 = '/var/tmp/bacula-restores',
+  Optional[Array[Hash]] $run_scripts    = undef,
+  Optional[String] $storage_server      = "bacula.${facts['domain']}",
+  Array[String] $tls_allowed_cn         = [],
+  String $tls_ca_cert                   = '/var/lib/bacula/ssl/certs/ca.pem',
+  Optional[String] $tls_ca_cert_dir     = undef,
+  String $tls_cert                      = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
+  String $tls_key                       = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
+  Boolean $tls_require                  = true,
+  Boolean $tls_verify_peer              = true,
+  Boolean $use_tls                      = false,
+  ) {
 
-  if !is_domain_name($name) {
-    fail "Name for client ${name} must be a fully qualified domain name"
-  }
-
-  validate_bool($backup_enable)
-
-  case $db_backend {
-    undef   : {
-      $db_backend_real = $::bacula::director::db_backend ? {
-        undef   => 'sqlite',
-        default => $::bacula::director::db_backend,
-      }
-    }
-    default : {
-      $db_backend_real = $db_backend
-    }
-  }
-
-  case $director_password {
-    ''      : {
-      $director_password_real = $::bacula::director::director_password ? {
-        undef   => '',
-        default => $::bacula::director::director_password,
-      }
-    }
-    default : {
-      $director_password_real = $director_password
-    }
-  }
-
-  case $director_server {
-    undef   : {
-      $director_server_real = $::bacula::director::director_server ? {
-        undef   => $::bacula::params::director_server_default,
-        default => $::bacula::director::director_server,
-      }
-    }
-    default : {
-      $director_server_real = $director_server
-    }
-  }
-
-  if !is_domain_name($director_server_real) {
-    fail "director_server=${director_server_real} must be a fully qualified domain name"
-  }
-  validate_bool($restore_enable)
-  validate_absolute_path($restore_where)
-
-  $pool_diff_real = $pool_diff ? {
-    undef   => "${pool}.differential",
-    default => $pool_diff,
-  }
-
-  $pool_full_real = $pool_full ? {
-    undef   => "${pool}.full",
-    default => $pool_full,
-  }
-
-  $pool_incr_real = $pool_incr ? {
-    undef   => "${pool}.incremental",
-    default => $pool_incr,
-  }
-
-  if !(validate_bool($rerun_failed_levels)) {
-    fail("rerun_failed_levels = ${rerun_failed_levels} must be a boolean value")
-  }
-
-  if $run_scripts {
-    case type3x($run_scripts) {
-      'array' : {
-        # TODO figure out how to validate each item in the array is a hash.
-        $run_scripts_real = $run_scripts
-      }
-      'hash'  : {
-        $run_scripts_real = [$run_scripts]
-      }
-      default : {
-        fail("run_scripts = ${run_scripts} must be an array of hashes or a hash")
-      }
-    }
-  }
-
-  case $storage_server {
-    undef   : {
-      $storage_server_real = $::bacula::director::storage_server ? {
-        undef   => $::bacula::params::storage_server_default,
-        default => $::bacula::director::storage_server,
-      }
-    }
-    default : {
-      $storage_server_real = $storage_server
-    }
-  }
-
-  if !is_domain_name($storage_server_real) {
-    fail "storage_server=${storage_server_real} must be a fully qualified domain name"
-  }
+  include 'bacula::director'
 
   file { "/etc/bacula/bacula-dir.d/${name}.conf":
     ensure    => $ensure,

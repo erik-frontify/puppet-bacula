@@ -121,13 +121,13 @@ done
 
 if [ -z "$storage_device_dir" -o ! -d "$storage_device_dir" ] ; then
   usage
-  echo -e "\n${RED}No directory supplied for ${UL}STORAGE_DEVICE_DIR${UL_OFF}${NORMAL}" >&2
+  echo -e "\n${RED}no directory supplied for ${UL}STORAGE_DEVICE_DIR${UL_OFF}${NORMAL}" >&2
   clean_exit 1
 fi
 
 if $move_files && [ -z "$move_dest_dir" -o ! -d "$move_dest_dir" ] ; then
   usage
-  echo -e "\n${RED}No directory supplied for ${UL}MOVE_DEST_DIR${UL_OFF}${NORMAL}" >&2
+  echo -e "\n${RED}no directory supplied for ${UL}MOVE_DEST_DIR${UL_OFF}${NORMAL}" >&2
   clean_exit 1
 fi
 
@@ -146,8 +146,8 @@ echo -e "list volumes\nquit" | /usr/sbin/bconsole | \
 num_volumes=`wc -l $temp_file_volumes | awk '{ print $1}'`
 
 if [ "${num_volumes}" -eq "0" ] ; then
-  echo -e "`date +'%F %T'` No volumes to work on" >> $log_file
-  echo -e "`date +'%F %T'` No volumes to work on" 1>&2
+  echo -e "`date +'%F %T'` no volumes to work on" >> $log_file
+  echo -e "`date +'%F %T'` no volumes to work on" 1>&2
   clean_exit 1
 fi
 
