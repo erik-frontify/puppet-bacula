@@ -42,8 +42,14 @@ class bacula::client (
   $tls_require       = true,
   $tls_verify_peer   = true,
   $use_tls           = false
-) {
+  ) {
+
   include ::bacula::params
+
+  $var_dir = $::operatingsystem ? {
+    /(?i:windows)/    => 'C:/ProgramData/Bacula',
+    default           => '/var/lib/bacula',
+  }
 
   $director_server_real = $director_server ? {
     undef   => $::bacula::params::director_server_default,
@@ -55,19 +61,20 @@ class bacula::client (
   }
 
   $file_requires = $plugin_dir ? {
-    undef   => File['/var/lib/bacula'],
+    undef   => File['/etc/bacula'],
     default => File['/var/lib/bacula', $plugin_dir]
   }
 
   $bacula_fd_conf = $::operatingsystem ? {
     /(?i:CentOS|Fedora|openSUSE|SLES)/ => '/etc/bacula/bacula-fd.conf',
+    /(?i:windows)/ => 'C:/Program Files/bacula/bacula-fd.conf',
   }
 
   file { $bacula_fd_conf:
     ensure    => file,
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0640',
+    owner     => $operatingsystem ? { windows => 'Administrator', default => 'root'},
+    group     => $operatingsystem ? { windows => 'Administrators', default => 'root'},
+    mode      => '0644',
     content   => template('bacula/bacula-fd.conf.erb'),
     require   => [ Package[$bacula::params::client_package], $file_requires, ],
     notify    => Service['bacula-fd'],

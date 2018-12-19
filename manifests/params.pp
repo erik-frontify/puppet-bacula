@@ -37,21 +37,23 @@ class bacula::params {
 
   $client_package = $::operatingsystem ? {
     /(?i:CentOS|Fedora|openSUSE|SLES)/ => 'bacula-client',
+    /(?i:windows)/ => 'bacula',
   }
 
   $console_package             = 'bacula-console'
 
-  $director_mysql_package      = $::operatingsystem ? {
-    /(Debian|Ubuntu)/ => 'bacula-director-mysql',
-    /(CentOS|Fedora)/ => 'bacula-director',
-    /(?i:opensuse|SLES)/   => 'bacula-mysql',
+  $director_mysql_package = $::operatingsystem ? {
+    /(Debian|Ubuntu)/     => 'bacula-director-mysql',
+    /(CentOS|Fedora)/     => 'bacula-director',
+    /(?i:opensuse|SLES)/  => 'bacula-mysql',
+    default               => undef,
   }
 
   $director_postgresql_package = $::operatingsystem ? {
-    /(Debian|Ubuntu)/ => 'bacula-director-pgsql',
-    /(CentOS|Fedora)/ => 'bacula-director',
-    /(?i:opensuse|SLES)/   => 'bacula-postgresql',
-    default           => 'bacula-director-postgresql',
+    /(Debian|Ubuntu)/          => 'bacula-director-pgsql',
+    /(CentOS|Fedora)/          => 'bacula-director',
+    /(?i:opensuse|SLES)/       => 'bacula-postgresql',
+    default                    => 'bacula-director-postgresql',
   }
 
   $director_server_default     = "bacula.${::domain}"
@@ -62,18 +64,20 @@ class bacula::params {
   }
 
   $director_sqlite_package = $::operatingsystem ? {
-    /(Debian|Ubuntu)/ => 'bacula-director-sqlite',
-    /(CentOS|Fedora)/ => 'bacula-director',
+    /(Debian|Ubuntu)/      => 'bacula-director-sqlite',
+    /(CentOS|Fedora)/      => 'bacula-director',
     /(?i:opensuse|SLES)/   => 'bacula-sqlite3',
+    default                => undef,
   }
 
-  $lib    = $::architecture ? {
+  $lib = $::architecture ? {
     x86_64  => 'lib64',
     default => 'lib',
   }
 
   $libdir = $::operatingsystem ? {
     /(Debian|Ubuntu)/ => '/usr/lib',
+    /(?i:windows)/    => 'C:\Program Data\Bacula',
     default           => "/usr/${lib}",
   }
 
@@ -82,7 +86,7 @@ class bacula::params {
 
   $manage_logwatch = $::operatingsystem ? {
     /(Debian|Ubuntu)/ => false,
-    /(?i:CentOS|Fedora|openSUSE|SLES)/ => false,
+    /(?i:CentOS|Fedora|openSUSE|SLES|windows)/ => false,
     default           => true,
   }
 

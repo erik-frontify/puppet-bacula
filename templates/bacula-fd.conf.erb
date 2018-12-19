@@ -31,11 +31,11 @@ Director {
 # Now configure the actual File Daemon
 FileDaemon {
   Name = "<%= scope.lookupvar('::fqdn') -%>"
-  Working Directory = /var/lib/bacula
+  Working Directory = <%= @var_dir %>
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>
 <% end -%>
-  PID Directory = /var/lib/bacula
+  PID Directory = <%= @var_dir %>
   Maximum Concurrent Jobs = 3
 <% if @use_tls -%>
   TLS Enable = yes
