@@ -77,6 +77,14 @@ class bacula::client (
     }
   }
 
+  # Not sure if this affects Fedora
+  if $facts['operatingsystem'] == 'CentOS' and $facts['selinux'] == true {
+    selinux::module { 'bacula_fd':
+        source => 'puppet:///modules/bacula/selinux',
+        before => Service['bacula-fd'],
+    }
+  }
+
   service { 'bacula-fd':
     ensure     => running,
     enable     => true,
