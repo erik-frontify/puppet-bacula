@@ -5,7 +5,7 @@ Client {
   Catalog  = "<%= @director_server_real %>:<%= @db_backend_real %>"
   File Retention = 12 Weeks
   Job Retention  = 1 Year
-  Auto Prune = yes
+  AutoPrune = yes
 <% if @use_tls -%>
   TLS Enable = yes
   TLS Require = <%= @tls_require ? 'yes':'no' %>
