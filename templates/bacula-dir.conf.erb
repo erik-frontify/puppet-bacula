@@ -112,8 +112,8 @@ Storage {
 Pool {
   Name = "<%= @storage_server_real -%>:pool:default"
   Pool Type = Backup
-  # Clean up any we don't need, and keep them for a maximum of a month (in
-  # theory the same time period for weekly backups from the clients)
+  # Clean up any we don't need, and keep them for a maximum of <%= @volume_retention %>
+  # (in theory the same time period for weekly backups from the clients)
   # Note the files for the old volumes will still remain on the disk but will
   # be truncated to a zero size.
   Recycle = yes
