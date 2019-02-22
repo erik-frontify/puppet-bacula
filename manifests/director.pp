@@ -80,6 +80,14 @@ class bacula::director (
   include 'bacula::common'
   include 'bacula::console'
 
+  # Update SELinux policies to allow the director to run
+  if $facts['selinux'] == true {
+    selinux::module { 'bacula-dir':
+        source => 'puppet:///modules/bacula/selinux',
+        before => Service['bacula-dir'],
+    }
+  }
+
   package { $director_package:
     ensure => installed,
   }
