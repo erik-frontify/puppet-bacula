@@ -37,8 +37,9 @@
 define bacula::director::fileset (
   $ensure   = 'file',
   $exclude_files = undef,
-  $include_files = undef
-) {
+  $include_files = undef,
+  $enable_vss = false,
+  ) {
 
   if !($ensure in ['file', 'absent']) {
     fail('The only valid values for the ensure parameter are file or absent')
