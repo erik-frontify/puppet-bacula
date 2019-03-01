@@ -220,6 +220,10 @@ class bacula::common (
     owner   => $operatingsystem ? { windows => 'Administrator', default => 'bacula'},
     group   => $operatingsystem ? { windows => 'Administrators', default => 'bacula'},
     mode    => $operatingsystem ? { windows => '0775', default => '0755'},
+    seltype => $::osfamily ? {
+        'RedHat' => 'bacula_var_run_t',
+        default  => undef,
+    },
     require => Package[$require_package],
   }
 }
