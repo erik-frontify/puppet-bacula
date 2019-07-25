@@ -94,6 +94,12 @@ class bacula::storage (
     require => Package[$db_package],
   }
 
+  if $facts['selinux'] {
+    selinux::fcontext { "${storage_default_mount}(/.*)?":
+      seltype => 'bacula_store_t',
+    }
+  }
+
   file { '/etc/bacula/bacula-sd.d':
     ensure  => directory,
     owner   => 'bacula',
