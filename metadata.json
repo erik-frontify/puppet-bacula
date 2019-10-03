@@ -10,8 +10,8 @@
   "description": "This module manages Bacula, a complete backup solution.",
   "tags": ["bacula", "backup"],
   "operatingsystem_support": [
-    { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7" ] },
-    { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7" ] },
+    { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7", "8" ] },
+    { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7", "8" ] },
     { "operatingsystem":"Fedora", "operatingsystemrelease": [ "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" ] },
     { "operatingsystem":"openSUSE", "operatingsystemrelease": [ "42" ] },
     { "operatingsystem":"SLES", "operatingsystemrelease":[ "12" ] }
