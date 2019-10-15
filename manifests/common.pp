@@ -33,7 +33,11 @@
 class bacula::common (
   Boolean $manage_config_dir = false,
   Boolean $manage_db_tables  = true,
-  String $plugin_dir         = '/usr/lib64/bacula',
+  String  $conf_dir          = '/etc/bacula',
+  String  $lib_dir           = '/var/lib/bacula',
+  String  $log_dir           = '/var/log/bacula',
+  String  $plugin_dir        = '/usr/lib64/bacula',
+  String  $spool_dir         = '/var/spool/bacula',
   ) {
 
   if $facts['operatingsystem'] =~ /(?i:opensuse)/ {
@@ -69,17 +73,6 @@ class bacula::common (
     }
   }
 
-  # Specify the user and group are present before we create files.
-  #group { 'bacula':
-  #  ensure => present,
-  #}
-
-  #user { 'bacula':
-  #  ensure  => present,
-  #  gid     => 'bacula',
-  #  require => Group['bacula'],
-  #}
-
   $config_dir_source = $manage_config_dir ? {
     true    => 'puppet:///modules/bacula/bacula-empty.dir',
     default => undef,
@@ -88,18 +81,36 @@ class bacula::common (
   file {
     default:
         ensure  => directory,
-        owner   => 'bacula',
-        group   => 'bacula',
+        owner   => $facts['kernel'] ? {
+            'windows' => 'BUILTIN\Administrators',
+            default   => 'bacula',
+        },
+        group  => $facts['kernel'] ? {
+            'windows' => 'Internet User',
+            default   => 'bacula',
+        },
     ;
 
     $plugin_dir:
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
+        owner  => $facts['kernel'] ? {
+            'windows' => 'BUILTIN\Administrators',
+            default   => 'root',
+        },
+        group  => $facts['kernel'] ? {
+            'windows' => 'Internet User',
+            default   => 'root',
+        },
+        mode   => $facts['kernel'] ? {
+            'windows' => undef,
+            default   => '0755',
+        },
     ;
 
-    '/etc/bacula':
-        mode    => '0750',
+    $conf_dir:
+        mode => $facts['kernel'] ? {
+            'windows' => undef,
+            default   => '0750',
+        },
         purge   => $manage_config_dir,
         force   => $manage_config_dir,
         recurse => $manage_config_dir,
@@ -107,21 +118,21 @@ class bacula::common (
     ;
 
     # This is necessary to prevent the object above from deleting the supplied scripts
-    '/etc/bacula/scripts':
+    "${conf_dir}/scripts":
     ;
 
     # To avoid SELinux denials this directory must belong to the root group.
     # See https://danwalsh.livejournal.com/69478.html for more details on
     # the root cause of this failure
-    '/var/lib/bacula':
+    $lib_dir:
         mode    => '0775',
     ;
 
-    '/var/spool/bacula':
+    $spool_dir:
         mode    => '0755',
     ;
 
-    '/var/log/bacula':
+    $log_dir:
         recurse => true,
         mode    => '0755',
     ;

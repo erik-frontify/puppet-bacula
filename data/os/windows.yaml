@@ -1,0 +1,13 @@
+---
+bacula::plugin_dir:         'C:/Program Files/Bacula/plugins'
+
+bacula::common::conf_dir:   'C:/Program Files/Bacula'
+bacula::common::lib_dir:    'C:/ProgramData/Bacula/lib'
+bacula::common::log_dir:    'C:/ProgramData/Bacula/log'
+bacula::common::plugin_dir: "%{hiera('bacula::plugin_dir')}"
+bacula::common::spool_dir:  'C:/ProgramData/Bacula/spool'
+
+bacula::client::client_package: 'bacula'
+bacula::client::var_dir:        "%{hiera('bacula::common::lib_dir')}"
+bacula::client::bacula_fd_conf: 'C:/Program Files/Bacula/bacula-fd.conf'
+

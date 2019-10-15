@@ -31,20 +31,20 @@
 # limitations under the License.
 
 class bacula::client (
+  String $var_dir                   = '/var/lib/bacula',
   String $bacula_fd_conf            = '/etc/bacula/bacula-fd.conf',
   String $client_package            = 'bacula-client',
   String $director_password         = cache_data('bacula', 'director_password', extlib::random_password(32)),
   String $director_server           = "bacula.${facts['domain']}",
   String $plugin_dir                = '/usr/lib64/bacula',
   Array[String] $tls_allowed_cn     = [],
-  String $tls_ca_cert               = '/var/lib/bacula/ssl/certs/ca.pem',
-  String $tls_key                   = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
-  String $tls_cert                  = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
+  String $tls_ca_cert               = "${var_dir}/ssl/certs/ca.pem",
+  String $tls_key                   = "${var_dir}/ssl/private_keys/${::fqdn}.pem",
+  String $tls_cert                  = "${var_dir}/ssl/certs/${::fqdn}.pem",
   Optional[String] $tls_ca_cert_dir = undef,
   Boolean $tls_require              = true,
   Boolean $tls_verify_peer          = true,
   Boolean $use_tls                  = true,
-  String $var_dir                   = '/var/lib/bacula',
   ) {
 
   include 'bacula::common'
@@ -53,15 +53,13 @@ class bacula::client (
     ensure => installed,
   }
 
-  $file_requires = File['/var/lib/bacula', $plugin_dir]
-
   file { $bacula_fd_conf:
     ensure    => file,
-    owner     => 'root',
-    group     => 'root',
+    owner     => $operatingsystem ? { windows => 'Administrator', default => 'root'},
+    group     => $operatingsystem ? { windows => 'Administrators', default => 'root'},
     mode      => '0640',
     content   => template('bacula/bacula-fd.conf.erb'),
-    require   => [ Package[$client_package], $file_requires, ],
+    require   => [ Package[$client_package], Class['bacula::common'] ],
     notify    => Service['bacula-fd'],
     show_diff => false,
   }

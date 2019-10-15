@@ -1,6 +1,6 @@
 {
   "name": "blackknight36-bacula",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "author": "Michael Watters <wattersm@watters.ws>",
   "summary": "This module is a continuation of the rharrison10-bacula module",
   "license": "Apache-2.0",
@@ -14,7 +14,8 @@
     { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7", "8" ] },
     { "operatingsystem":"Fedora", "operatingsystemrelease": [ "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" ] },
     { "operatingsystem":"openSUSE", "operatingsystemrelease": [ "42" ] },
-    { "operatingsystem":"SLES", "operatingsystemrelease":[ "12" ] }
+    { "operatingsystem":"SLES", "operatingsystemrelease":[ "12" ] },
+    { "operatingsystem":"windows", "operatingsystemrelease":[ "7", "10" ] }
   ],
   "dependencies": [
     {"name":"puppetlabs/extlib", "version_requirement":">=1.0.0"},

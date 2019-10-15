@@ -226,7 +226,7 @@
 #
 # === Copyright
 #
-# Copyright 2018 Michael Watters
+# Copyright 2019 Michael Watters
 #
 # === License
 #
@@ -297,11 +297,7 @@ class bacula (
   String $volume_retention_incr          = '10 Days',
   ) {
 
-  class { 'bacula::common':
-    manage_config_dir => $manage_config_dir,
-    manage_db_tables  => $manage_db_tables,
-    plugin_dir        => $plugin_dir,
-  }
+  include 'bacula::common'
 
   if $is_director {
     class { 'bacula::director':

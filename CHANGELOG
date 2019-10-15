@@ -1,3 +1,9 @@
+2019-10-15  Michael Watters <wattersm@watters.ws> - 2.0.3
+  * Minor bug fixes
+
+2019-10-15  Michael Watters <wattersm@watters.ws> - 2.0.2
+  * Updated module to work on windows nodes
+
 2019-10-07  Michael Watters <wattersm@watters.ws> - 2.0.1
   * Rewrite module to use hiera data provider
 
