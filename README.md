@@ -554,6 +554,26 @@ node /bacula-dir\d+/ {
 }
 ```
 
+You may also export custom file sets as follows.
+
+```
+  @@bacula::director::fileset { 'windows_fileset':
+      tag           => 'bacula-director',
+      enable_vss    => true,
+      include_files => ['c:/users/username'],
+      exclude_files => [
+          'c:/users/username/dropbox',
+          'c:/users/username/nextcloud'
+      ],
+  }
+```
+
+Once exported the resources can be realized on the director based on the resource tag.  For example:
+
+```
+  Bacula::Director::Fileset <<| tag == $facts['hostname'] |>>
+```
+
 ## Using `clients` Parameter Hash
 
 The `bacula` class takes a `clients` parameter.  The value for `clients` must
@@ -744,10 +764,6 @@ stored the custom template.
 
 # TODO
 
-* Add ability to create custom Filesets.
 * Add ability to create custom schedules.
 * Add ability to configure storage servers external to the director.
 * Add ability to configure multiple pools on a storage server
-* [rspec-puppet](http://rspec-puppet.com/) unit tests.
-
-
