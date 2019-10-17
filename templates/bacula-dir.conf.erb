@@ -51,12 +51,12 @@ Messages {
   Mail Command = "<%= @mail_command %>"
   Operator Command = "<%= @operator_command %>"
 <% if @mail_to -%>
-  Mail = <%= @mail_to -%> = all, !skipped
+  Mail = "<%= @mail_to -%>" = all, !skipped
 <% end -%>
 <% if @mail_to_on_error -%>
-  Mail On Error = <%= @mail_to_on_error -%> = all, !skipped
+  Mail On Error = "<%= @mail_to_on_error -%>" = all, !skipped
 <% end -%>
-  Operator = <%= @mail_to_operator -%> = mount
+  Operator = "<%= @mail_to_operator -%>" = mount
   Console = all, !skipped, !saved
   # WARNING! the following will create a file that you must cycle from
   #          time to time as it will grow indefinitely. However, it will
@@ -69,7 +69,7 @@ Messages {
 Messages {
   Name = "<%= @director_server -%>:messages:daemon"
   Mail Command = "/usr/sbin/bsmtp -h localhost -f bacula@<%= scope.lookupvar('::fqdn') -%> -s \"Bacula Notice (from Director %d)\" %r"
-  Mail = <%= @mail_to_daemon -%> = all, !skipped
+  Mail = "<%= @mail_to_daemon -%>" = all, !skipped
   Console = all, !skipped, !saved
   Append = "/var/log/bacula/<%= @director_server -%>:director.log" = all, !skipped
 }
