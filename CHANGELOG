@@ -1,3 +1,6 @@
+2019-10-15  Michael Watters <wattersm@watters.ws> - 2.0.5
+  * Update director config to ensure that string values are quoted properly.
+
 2019-10-15  Michael Watters <wattersm@watters.ws> - 2.0.4
   * Updated documentation.
 
