@@ -25,4 +25,5 @@ RSpec.configure do |c|
     c.after(:suite) do
         RSpec::Puppet::Coverage.report!(20)
     end
+    c.fail_fast = 1
 end

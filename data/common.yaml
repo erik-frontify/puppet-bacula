@@ -1,4 +1,6 @@
 ---
+bacula::client::client_package: bacula-fd
+
 bacula::director::director_package: bacula-director
 bacula::director::director_service: bacula-dir
 

@@ -53,13 +53,14 @@ class bacula::client (
     ensure => installed,
   }
 
-  file { $bacula_fd_conf:
+  file { 'bacula-fd.conf':
     ensure    => file,
+    path      => $bacula_fd_conf,
     owner     => $operatingsystem ? { windows => 'Administrator', default => 'root'},
     group     => $operatingsystem ? { windows => 'Administrators', default => 'root'},
     mode      => '0640',
     content   => template('bacula/bacula-fd.conf.erb'),
-    require   => [ Package[$client_package], Class['bacula::common'] ],
+    require   => Package[$client_package],
     notify    => Service['bacula-fd'],
     show_diff => false,
   }
@@ -75,11 +76,18 @@ class bacula::client (
     }
   }
 
+  if $facts['selinux'] {
+    selinux::module { 'bacula_fd_fix':
+      source_te => 'puppet:///modules/bacula/selinux/bacula_fd_fix.te',
+      before    => Service['bacula-fd'],
+    }
+  }
+
   service { 'bacula-fd':
     ensure     => running,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    require    => File[$bacula_fd_conf],
+    require    => File['bacula-fd.conf'],
   }
 }

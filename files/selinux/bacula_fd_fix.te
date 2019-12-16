@@ -1,0 +1,7 @@
+
+module bacula_fd_fix 1.0;
+
+require {
+        type bacula_t;
+        class capability dac_override;
+}
