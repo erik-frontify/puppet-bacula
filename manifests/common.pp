@@ -38,7 +38,12 @@ class bacula::common (
   String  $log_dir           = '/var/log/bacula',
   String  $plugin_dir        = '/usr/lib64/bacula',
   String  $spool_dir         = '/var/spool/bacula',
+  Array[String] $packages    = ['bacula-common'],
   ) {
+
+  package { $packages:
+    ensure => installed,
+  }
 
   if $facts['operatingsystem'] =~ /(?i:opensuse)/ {
     $dist_name = regsubst($facts['lsbdistdescription'], ' ', '_', 'G')
@@ -80,14 +85,18 @@ class bacula::common (
 
   file {
     default:
-        ensure  => directory,
-        owner   => $facts['kernel'] ? {
+        ensure => directory,
+        owner  => $facts['kernel'] ? {
             'windows' => 'BUILTIN\Administrators',
             default   => 'bacula',
         },
         group  => $facts['kernel'] ? {
             'windows' => 'Internet User',
             default   => 'bacula',
+        },
+        require => $facts['kernel'] ? {
+            'windows' => undef,
+            default   => Package[$packages],
         },
     ;
 

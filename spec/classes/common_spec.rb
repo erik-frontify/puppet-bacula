@@ -20,6 +20,17 @@ describe 'bacula::common' do
     ],
   }
 
+  redhat = {
+    :hardwaremodels => 'x86_64',
+    :supported_os   => [
+      {
+        'operatingsystem'        => 'RedHat',
+        'operatingsystemrelease' => ['7', '8'],
+      },
+    ],
+  }
+
+
   on_supported_os(sles).each do |os, facts|
     context "on #{os}" do
       let(:facts) do
@@ -76,49 +87,19 @@ describe 'bacula::common' do
   #  end
   #end
 
-  on_supported_os.each do |os, facts|
+  on_supported_os(redhat).each do |os, facts|
     context "on #{os}" do
       let(:facts) do
         facts
       end
 
-      #it do
-      #  is_expected.to contain_package(nil)
-      #      .with({
-      #        'ensure' => 'installed',
-      #        'notify' => '$packages_notify',
-      #        })
-      #end
-
-      #it do
-      #  is_expected.to contain_file(nil)
-      #      .with({
-      #        'ensure' => 'directory',
-      #        'owner' => 'root',
-      #        'group' => 'root',
-      #        'mode' => '0755',
-      #        })
-      #end
+      it do
+        is_expected.to contain_package('bacula-common') .with({ 'ensure' => 'installed', })
+      end
 
       it do
         is_expected.to contain_file('/usr/lib64/bacula')
       end
-
-      #it do
-      #  is_expected.to contain_group('bacula')
-      #      .with({
-      #        'ensure' => 'present',
-      #      })
-      #end
-
-      #it do
-      #  is_expected.to contain_user('bacula')
-      #      .with({
-      #        'ensure'  => 'present',
-      #        'gid'     => 'bacula',
-      #        'require' => 'Group[bacula]',
-      #      })
-      #end
 
       it do
         is_expected.to contain_file('/etc/bacula')
@@ -131,8 +112,8 @@ describe 'bacula::common' do
               :force   => false,
               :recurse => false,
               :source  => nil,
-              })
-              #.that_requires('Package[]')
+            })
+            .that_requires('Package[bacula-common]')
       end
 
       it do
@@ -141,8 +122,8 @@ describe 'bacula::common' do
               'ensure' => 'directory',
               'owner' => 'bacula',
               'group' => 'bacula',
-              })
-              #'require' => 'Package[$require_package]',
+            })
+            .that_requires('Package[bacula-common]')
       end
 
       it do
@@ -153,6 +134,7 @@ describe 'bacula::common' do
               :group   => 'bacula',
               :mode    => '0775',
             })
+            .that_requires('Package[bacula-common]')
       end
 
       it do
@@ -162,8 +144,8 @@ describe 'bacula::common' do
               'owner' => 'bacula',
               'group' => 'bacula',
               'mode' => '0755',
-              })
-              #'require' => 'Package[$require_package]',
+            })
+            .that_requires('Package[bacula-common]')
       end
 
       it do
@@ -174,10 +156,9 @@ describe 'bacula::common' do
               'owner' => 'bacula',
               'group' => 'bacula',
               'mode' => '0755',
-              })
-              #'require' => 'Package[$require_package]',
+            })
+            .that_requires('Package[bacula-common]')
       end
-
     end
   end
 end
