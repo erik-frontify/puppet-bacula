@@ -1,0 +1,40 @@
+Job {
+  Name = "<%= @name %>"
+<% if @type -%>
+  Type = <%= @type %>
+<% end -%>
+<% if @level -%>
+  Level = <%= @level %>
+<% end -%>
+  Client = <%= @client %>
+<% if @jobdefs -%>
+  JobDefs = "<%= @jobdefs %>"
+<% end -%>
+<% if @fileset -%>
+  FileSet = "<%= @fileset %>"
+<% end -%>
+<% if @schedule -%>
+  Schedule = "<%= @schedule %>"
+<% end -%>
+<% if @storage -%>
+  Storage = "<%= @storage %>"
+<% end -%>
+<% if @messages -%>
+  Messages = "<%= @messages %>"
+<% end -%>
+<% if @pool -%>
+  Pool = "<%= @pool %>"
+<% end -%>
+<% if @priority -%>
+  Priority = <%= @priority %>
+<% end -%>
+<% if @max_run_time -%>
+  Max Run Time = <%= @max_run_time %>
+<% end -%>
+<% if @accurate -%>
+  Accurate = <%= @accurate ? 'yes':'no' %>
+<% end -%>
+<% if @spool_attributes -%>
+  Spool Attributes = <%= @spool_attributes ? 'yes':'no' %>
+<% end -%>
+}
