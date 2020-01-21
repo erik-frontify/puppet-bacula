@@ -24,6 +24,9 @@ This module is a fork of the [Puppet Labs](http://puppetlabs.com/)
 * Puppetlabs/stdlib module.  Can be obtained
   [here](http://forge.puppetlabs.com/puppetlabs/stdlib) or with the command
   `puppet-module install puppetlabs/stdlib`
+* voxpupuli/puppet-extlib module. Can be optained
+  [here](https://forge.puppet.com/puppet/extlib) or with the command
+  `puppet module install puppet-extlib`
 
 ## Postgresql Database Backend
 * puppetlabs-postgresql module.  Can be obtained
