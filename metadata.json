@@ -18,7 +18,6 @@
   "dependencies": [
     {"name":"puppet/extlib", "version_requirement":">=4.0.0"},
     {"name":"puppet/selinux", "version_requirement":">=3.0.0 <= 4.0.0"},
-    {"name":"puppet/zypprepo", "version_requirement":">=2.0.0 <= 2.2.2"},
     {"name":"puppetlabs/stdlib", "version_requirement":">=2.2.0 <= 5.2.0"},
     {"name":"puppetlabs/mysql", "version_requirement":">= 9.1.0 < 10.0.0"},
     {"name":"puppetlabs/postgresql","version_requirement":">= 6.1.0 < 7.0.0"},

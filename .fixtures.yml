@@ -10,4 +10,3 @@ fixtures:
       'selinux':      'puppet/selinux'
       'stdlib':       'puppetlabs/stdlib'
       'sqlite':       'puppetlabs/sqlite'
-      'zypprepo':     'puppet/zypprepo'
