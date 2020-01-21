@@ -10,13 +10,19 @@
 #   Ensure the file is present or absent.  The only valid values are <tt>file</tt> or
 #   <tt>absent+. Defaults to <tt>file</tt>.
 #
+# [*enable_vss*]
+#   This parameter controls whether bacula will use the VSS service in windows.  Default value is false.
+#
 # [*exclude_files*]
 #   An array of strings consisting of one file or directory name per entry. Directory names should be specified without
-#   a trailing slash with Unix path notation.
+#   a trailing slash with Unix path notation.  Default value is undefined.
 #
 # [*include_files*]
 #   *Required*: An array of strings consisting of one file or directory name per entry. Directory names should be specified without
 #   a trailing slash with Unix path notation.
+#
+# [*options*]
+#   A hash of options for the fileset.
 #
 # === Examples
 #
@@ -39,14 +45,18 @@
 
 define bacula::director::fileset (
   String $ensure = 'file',
-  Array[String] $exclude_files,
   Array[String] $include_files,
   Boolean $enable_vss = false,
+  Optional[Array[String]] $exclude_files = undef,
+  Optional[Hash] $options = { "Signature" => "SHA1", "Compression" => "GZIP" },
   ) {
 
   include 'bacula::director'
 
-  file { "/etc/bacula/bacula-dir.d/fileset-${name}.conf":
+  # Sterilize the name.
+  $sterile_name = regsubst($name, '[^\w]+', '-', 'G')
+
+  file { "/etc/bacula/bacula-dir.d/fileset-${sterile_name}.conf":
     ensure  => $ensure,
     owner   => 'bacula',
     group   => 'bacula',

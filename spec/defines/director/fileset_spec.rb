@@ -1,13 +1,28 @@
 require 'spec_helper'
 
 describe 'bacula::director::fileset' do
-  let(:title) { 'bacula-fileset' }
+  linux = {
+    :hardwaremodels => 'x86_64',
+    :supported_os   => [
+      {
+        'operatingsystem'        => 'CentOS',
+      },
+      {
+        'operatingsystem'        => 'RedHat',
+      },
+      {
+        'operatingsystem'        => 'Fedora',
+      },
+     ],
+  }
 
-  on_supported_os.each do |os, facts|
+  on_supported_os(linux).each do |os, facts|
     context "on #{os}" do
       let(:facts) do
         facts
       end
+
+      let(:title) { 'bacula-fileset' }
 
       let(:params) {{
         :ensure => 'file',
@@ -27,7 +42,23 @@ describe 'bacula::director::fileset' do
             .that_comes_before('Service[bacula-dir]')
             .that_notifies('Exec[bacula-dir reload]')
       end
+
+      context "name with spaces" do
+        let(:title) { 'File Server Projects' }
+
+        it do
+          is_expected.to contain_file('/etc/bacula/bacula-dir.d/fileset-File-Server-Projects.conf')
+            .with({
+              'ensure' => 'file',
+              'owner'  => 'bacula',
+              'group'  => 'bacula',
+              'mode'   => '0640',
+            })
+            .that_requires('File[/etc/bacula/bacula-dir.conf]')
+            .that_comes_before('Service[bacula-dir]')
+            .that_notifies('Exec[bacula-dir reload]')
+        end
+      end
     end
   end
-
 end

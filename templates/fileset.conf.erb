@@ -3,17 +3,16 @@ FileSet {
   EnableVSS = <%= @enable_vss ? 'yes':'no' %>
   Include {
     Options {
-      Signature   = SHA1
-      Compression = GZIP
+<% @options.each do |key,value| -%>
+      <%= key %> = <%= value %>
+<% end -%>
     }
-
 <% if @include_files -%>
 <% @include_files.each do |file_include| -%>
     File = <%= file_include %>
 <% end -%>
 <% end -%>
   }
-
 <% if @exclude_files -%>
   Exclude {
 <% @exclude_files.each do |file_exclude| -%>
