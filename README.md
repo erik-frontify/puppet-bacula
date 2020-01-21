@@ -7,7 +7,7 @@ Author: Russell Harrison <rharrison@fedoraproject.org>
 Copyright (c) 2012-2013, Russell Harrison
 
 Author: Michael Watters <wattersm@watters.ws>
-Copyright (c) 2019, Michael Watters
+Copyright (c) 2020, Michael Watters
 
 # About
 
@@ -20,10 +20,12 @@ This module is a fork of the [Puppet Labs](http://puppetlabs.com/)
 
 # Requirements
 
-* Puppet >=3.8
+* Puppet >=4.0.
+
 * Puppetlabs/stdlib module.  Can be obtained
   [here](http://forge.puppetlabs.com/puppetlabs/stdlib) or with the command
   `puppet-module install puppetlabs/stdlib`
+
 * voxpupuli/puppet-extlib module. Can be optained
   [here](https://forge.puppet.com/puppet/extlib) or with the command
   `puppet module install puppet-extlib`
@@ -46,6 +48,8 @@ This module is a fork of the [Puppet Labs](http://puppetlabs.com/)
 * Puppetlabs/sqlite module.  Can be obtained
   [here](http://forge.puppetlabs.com/puppetlabs/sqlite) or with the command
   `puppet-module install puppetlabs/sqlite`
+
+See the `metadata.json` file for additional requirements.
 
 # Installation
 
@@ -503,11 +507,9 @@ Whether to use [Bacula TLS - Communications Encryption](http://www.bacula.org/en
 
 ## Using Exported Resources
 
-Exported resources are probably the most flexible way of deploying this module
-involving the least amount of admin interaction to be successful.  The drawback
-is the intense overhead of
-[stored configurations](http://projects.puppetlabs.com/projects/1/wiki/Using_Stored_Configuration)
-on your Puppet master.
+Client configurations can be exported to puppetdb to allow automation
+of bacula client resources.  This allows the bacula director to automatically
+configure new clients as they are built.
 
 ### Example
 
@@ -516,7 +518,7 @@ node /web-server\d+/ {
   $director_password = 'directorpassword'
   $director_server   = "bacula-dir1.${::domain}"
 
-  # First install and configure bacula-fd pointing to the director.
+  # install and configure bacula-fd pointing to the director.
   class { 'bacula':
     director_password => $director_password,
     director_server   => $director_server,
@@ -524,8 +526,8 @@ node /web-server\d+/ {
     storage_server    => $director_server,
   }
 
-  # Now we declare the exported resource so that it will be available to
-  # install the needed configuration on the director server
+  # Declare the client configuration as an exported resource.
+  # This will be collected and realized on the director node.
   @@bacula::client::config { $::fqdn:
     client_schedule   => 'WeeklyCycle',
     director_password => $director_password,
@@ -551,13 +553,12 @@ node /bacula-dir\d+/ {
     storage_server    => $director_server,
   }
 
-  # Now lets realize all of the exported client config resources configured to
-  # backup to this director server.
+  # Collect exported client resources
   Bacula::Client::Config <<| director_server == $::fqdn |>>
 }
 ```
 
-You may also export custom file sets as follows.
+This module also supports exporting custom file sets as shown below.
 
 ```
   @@bacula::director::fileset { 'windows_fileset':
@@ -579,15 +580,12 @@ Once exported the resources can be realized on the director based on the resourc
 
 ## Using `clients` Parameter Hash
 
-The `bacula` class takes a `clients` parameter.  The value for `clients` must
-be a hash with the keys of the hash being the FQDN of the client.  The value of
-the client needs to be a hash containing the parameters for each client.
+The `bacula` class supports a `clients` parameter to define client nodes.
+The value of this parameter must be a hash with the keys set to the FQDN
+of each client to be backed up.  The value of each client key is another
+hash containing the parameters for each client.
 
-The advantage of this approach is that it can be implemented without stored
-configurations which will allow for scaling your Puppet masters much further.
-The disadvantage is that the `clients` hash must be maintained by hand or by
-an external provider such as an ENC, heira, or some other means which
-introduces maintanance overhead and / or complexity in your environment.
+See below for example.
 
 ### Example
 
@@ -610,11 +608,6 @@ node /bacula-dir\d+/ {
   $director_password = 'directorpassword'
   $director_server   = $::fqdn
 
-  # Now we setup the clients hash so the configuration files can be created
-  # for the director config.
-  # Note the values for the director and storage parameters will be derived
-  # from the values passed to the `bacula::director` class so they only have to
-  # be provided if they are different.
   $bacula_clients = {
     "web-server1.${::domain}" => {
       client_schedule => 'WeeklyCycle',
@@ -626,7 +619,7 @@ node /bacula-dir\d+/ {
     },
   }
 
-  # Lets set up the director server.
+  # set up the director server.
   class { '::bacula':
     clients           => $bacula_clients,
     console_password  => 'consolepassword',
@@ -638,10 +631,6 @@ node /bacula-dir\d+/ {
     mail_to           => "admin@${::domain}",
     storage_server    => $director_server,
   }
-
-  # Now lets realize all of the exported client config resources configured to
-  # backup to this director server.
-  Bacula::Client::Config <<| director_server == $::fqdn |>>
 }
 ```
 
