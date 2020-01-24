@@ -57,7 +57,7 @@ class bacula::client (
     ensure    => file,
     path      => $bacula_fd_conf,
     owner     => $operatingsystem ? { windows => 'Administrator', default => 'root'},
-    group     => $operatingsystem ? { windows => 'Administrators', default => 'root'},
+    group     => $operatingsystem ? { windows => 'Administrators', default => 0},
     mode      => '0640',
     content   => template('bacula/bacula-fd.conf.erb'),
     require   => Package[$client_package],

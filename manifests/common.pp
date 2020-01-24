@@ -41,8 +41,18 @@ class bacula::common (
   Array[String] $packages    = ['bacula-common'],
   ) {
 
-  package { $packages:
-    ensure => installed,
+  # FreeBSD does not have a "common" package
+  if $facts['operatingsystem'] != 'FreeBSD' {
+    package { $packages:
+      ensure => installed,
+    }
+
+    # To avoid SELinux denials this directory must belong to the root group.
+    # See https://danwalsh.livejournal.com/69478.html for more details on
+    # the root cause of this failure
+    file { $lib_dir:
+        mode => '0775',
+    }
   }
 
   $config_dir_source = $manage_config_dir ? {
@@ -62,6 +72,7 @@ class bacula::common (
             default   => 'bacula',
         },
         require => $facts['kernel'] ? {
+            'FreeBSD' => undef,
             'windows' => undef,
             default   => Package[$packages],
         },
@@ -74,7 +85,7 @@ class bacula::common (
         },
         group  => $facts['kernel'] ? {
             'windows' => 'Internet User',
-            default   => 'root',
+            default   => 0,
         },
         mode   => $facts['kernel'] ? {
             'windows' => undef,
@@ -95,13 +106,6 @@ class bacula::common (
 
     # This is necessary to prevent the object above from deleting the supplied scripts
     "${conf_dir}/scripts":
-    ;
-
-    # To avoid SELinux denials this directory must belong to the root group.
-    # See https://danwalsh.livejournal.com/69478.html for more details on
-    # the root cause of this failure
-    $lib_dir:
-        mode    => '0775',
     ;
 
     $spool_dir:
