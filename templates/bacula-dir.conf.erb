@@ -8,7 +8,7 @@
 Director {
   Name = "<%= @director_server -%>:director"
   Query File = "/etc/bacula/scripts/query.sql"
-  Working Directory = <%= @var_dir %>
+  Working Directory = <%= @working_dir %>
   PID Directory = <%= @var_dir %>
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>

@@ -52,6 +52,7 @@ class bacula::director (
   Optional[Boolean] $manage_logwatch        = undef,
   String $operator_command                  = "/usr/sbin/bsmtp -h localhost -f bacula@${::fqdn} -s \\\"Bacula Intervention Required (for %c)\\\" %r",
   Optional[String] $plugin_dir              = '/usr/lib64/bacula',
+  String $working_dir                       = $var_dir,
   String $storage_server                    = "bacula.${facts['domain']}",
   Array[String] $tls_allowed_cn             = [],
   Optional[String] $tls_ca_cert             = undef,

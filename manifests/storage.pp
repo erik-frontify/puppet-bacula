@@ -38,6 +38,7 @@ class bacula::storage (
   String $director_password             = cache_data('bacula', 'director_password', extlib::random_password(32)),
   String $director_server               = $facts['fqdn'],
   Optional[String] $plugin_dir          = '/usr/lib64/bacula',
+  String $working_dir                   = $var_dir,
   String $storage_default_mount         = '/mnt/bacula',
   String $storage_server                = $director_server,
   String $storage_package               = 'bacula-storage',

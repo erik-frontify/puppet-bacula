@@ -7,5 +7,6 @@ bacula::client::client_package: bacula9-client
 bacula::client::conf_dir: /usr/local/etc/bacula
 bacula::client::lib_dir: /var/run/bacula
 bacula::client::var_dir: /var/run/bacula
+bacula::client::working_dir: /var/db/bacula
 
 bacula::director::director_package: bacula9-server
