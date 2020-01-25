@@ -36,6 +36,7 @@ class bacula::client (
   String $client_package            = 'bacula-client',
   String $director_password         = cache_data('bacula', 'director_password', extlib::random_password(32)),
   String $director_server           = "bacula.${facts['domain']}",
+  String $pid_dir                   = $var_dir,
   String $plugin_dir                = '/usr/lib64/bacula',
   String $working_dir               = $var_dir,
   Array[String] $tls_allowed_cn     = [],

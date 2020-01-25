@@ -38,7 +38,7 @@ Messages {
 Storage {
   Name = "<%= @storage_server -%>:storage"
   Working Directory = "<%= @working_dir %>"
-  PID Directory = "<%= @var_dir %>"
+  PID Directory = <%= @pid_dir %>
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>
 <% end -%>
