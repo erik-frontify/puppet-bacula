@@ -1,3 +1,10 @@
+2020-01-30  Michael Watters <wattersm@watters.ws> - 2.0.9
+    * Bump version number.
+    * Fix bugs in mysql resources.
+    * Fix ordering of var_dir.
+    * Update default schedule configuration.
+    * Fix ordering regarding var_dir.
+
 2020-01-21  Michael Watters <wattersm@watters.ws> - 2.0.8
   * Remove SUSE support.
   * Updated README file.

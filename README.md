@@ -51,6 +51,8 @@ This module is a fork of the [Puppet Labs](http://puppetlabs.com/)
 
 See the `metadata.json` file for additional requirements.
 
+Note: Support for FreeBSD and Windows is a WIP.  Please create issues and/or submit a PR for any issues found.
+
 # Installation
 
 This module can be installed using r10k by adding the module to the Puppetfile.
@@ -756,6 +758,7 @@ stored the custom template.
 
 # TODO
 
+* Fix unit tests.  Integrate with TravisCI.
 * Add ability to create custom schedules.
 * Add ability to configure storage servers external to the director.
 * Add ability to configure multiple pools on a storage server

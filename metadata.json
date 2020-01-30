@@ -1,8 +1,8 @@
 {
   "name": "blackknight36-bacula",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "author": "Michael Watters <wattersm@watters.ws>",
-  "summary": "This module is a continuation of the rharrison10-bacula module",
+  "summary": "Installs and manages the bacula backup infrastructure.",
   "license": "Apache-2.0",
   "source": "https://github.com/blackknight36/puppet-bacula.git",
   "project_page": "https://github.com/blackknight36/puppet-bacula",
@@ -13,7 +13,8 @@
     { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7", "8" ] },
     { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7", "8" ] },
     { "operatingsystem":"Fedora", "operatingsystemrelease": [ "29", "30", "31" ] },
-    { "operatingsystem":"windows", "operatingsystemrelease":[ "7", "10" ] }
+    { "operatingsystem":"windows", "operatingsystemrelease":[ "7", "10" ] },
+    { "operatingsystem":"FreeBSD", "operatingsystemrelease": [ "12" ] }
   ],
   "dependencies": [
     {"name":"puppet/extlib", "version_requirement":">=4.0.0"},
