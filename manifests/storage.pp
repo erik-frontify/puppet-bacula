@@ -37,6 +37,7 @@ class bacula::storage (
   String $db_backend                    = 'sqlite',
   String $director_password             = cache_data('bacula', 'director_password', extlib::random_password(32)),
   String $director_server               = $facts['fqdn'],
+  String $var_dir                       = '/var/lib/bacula',
   String $pid_dir                       = $var_dir,
   Optional[String] $plugin_dir          = '/usr/lib64/bacula',
   String $working_dir                   = $var_dir,
@@ -53,7 +54,6 @@ class bacula::storage (
   Boolean $tls_verify_peer              = true,
   Boolean $use_tls                      = true,
   Boolean $block_checksum               = true,
-  String $var_dir                       = '/var/lib/bacula',
   ) {
 
   include 'bacula::common'
