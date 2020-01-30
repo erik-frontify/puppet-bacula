@@ -51,6 +51,7 @@ class bacula::director (
   Boolean $manage_db_tables                 = true,
   Optional[Boolean] $manage_logwatch        = undef,
   String $operator_command                  = "/usr/sbin/bsmtp -h localhost -f bacula@${::fqdn} -s \\\"Bacula Intervention Required (for %c)\\\" %r",
+  String $var_dir                           = '/var/lib/bacula',
   String $pid_dir                           = $var_dir,
   Optional[String] $plugin_dir              = '/usr/lib64/bacula',
   String $working_dir                       = $var_dir,
@@ -76,7 +77,6 @@ class bacula::director (
   String $volume_retention_full             = '1 Year',
   String $volume_retention_incr             = '10 Days',
   String $storage_default_mount             = '/mnt/bacula',
-  String $var_dir                           = '/var/lib/bacula',
   ) {
 
   include 'bacula::common'
