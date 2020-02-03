@@ -47,6 +47,9 @@ class bacula::client (
   Boolean $tls_require              = true,
   Boolean $tls_verify_peer          = true,
   Boolean $use_tls                  = true,
+  Boolean $pki_encryption           = false,
+  String $pki_keypair               = '/var/lib/bacula/ssl/encryption_keypair.pem',
+  String $pki_master_key            = '/var/lib/bacula/ssl/certs/master.crt',
   ) {
 
   include 'bacula::common'

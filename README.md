@@ -98,7 +98,10 @@ The following lists all the class parameters the `bacula` class accepts.
 
 For directors, `clients` is a hash of clients.  The keys are the clients while
 the values are a hash of parameters. The parameters accepted are the same as
-the `bacula::client::config` define.
+the `bacula::client::config` define. But allows additionally to enable encryption
+through setting `pki_encryption` to true and defining `pki_keypair` and
+`pki_master_key` files (which have to be placed on the client first).
+Please note that the `pki_master_key` is the public key, only!
 
 ### console_password
 
