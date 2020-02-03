@@ -95,4 +95,13 @@ class bacula::client (
     hasrestart => true,
     require    => File['bacula-fd.conf'],
   }
+
+  if $pki_encryption {
+    Exec { 'create_keypair':
+      command => "/usr/bin/openssl genrsa -out private.key 4096 && /usr/bin/openssl req -new -key private.key -x509 -out public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat private.key public.crt >$pki_keypair && rm private.key public.crt",
+      creates => "$pki_keypair",
+      notify  => Service['bacula-fd'],
+    }
+  }
+
 }
