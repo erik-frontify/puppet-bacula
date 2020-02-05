@@ -48,6 +48,7 @@ class bacula::client (
   Boolean $tls_verify_peer          = true,
   Boolean $use_tls                  = true,
   Boolean $pki_encryption           = false,
+  Boolean $manage_pki_keypair       = true,
   String $pki_keypair               = '/var/lib/bacula/ssl/encryption_keypair.pem',
   String $pki_master_key            = '/var/lib/bacula/ssl/certs/master.crt',
   ) {
@@ -96,7 +97,7 @@ class bacula::client (
     require    => File['bacula-fd.conf'],
   }
 
-  if $pki_encryption {
+  if $pki_encryption and $manage_pki_keypair {
     Exec { 'create_keypair':
       command => "/usr/bin/openssl genrsa -out private.key 4096 && /usr/bin/openssl req -new -key private.key -x509 -out public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat private.key public.crt >$pki_keypair && rm private.key public.crt",
       creates => "$pki_keypair",
