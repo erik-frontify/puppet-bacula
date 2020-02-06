@@ -49,8 +49,8 @@ class bacula::client (
   Boolean $use_tls                  = true,
   Boolean $pki_encryption           = false,
   Boolean $manage_pki_keypair       = true,
-  String $pki_keypair               = '/var/lib/bacula/ssl/encryption_keypair.pem',
-  String $pki_master_key            = '/var/lib/bacula/ssl/certs/master.crt',
+  String $pki_keypair               = "${var_dir}/ssl/encryption_keypair.pem",
+  String $pki_master_key            = "${var_dir}/ssl/certs/master.crt",
   ) {
 
   include 'bacula::common'
@@ -98,10 +98,29 @@ class bacula::client (
   }
 
   if $pki_encryption and $manage_pki_keypair {
-    Exec { 'create_keypair':
-      command => "/usr/bin/openssl genrsa -out private.key 4096 && /usr/bin/openssl req -new -key private.key -x509 -out public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat private.key public.crt >$pki_keypair && rm private.key public.crt",
+
+    $pki_keypair_path=dirname("$pki_keypair")
+    exec { "create $pki_keypair_path":
+      creates => $pki_keypair_path,
+      command => "/bin/mkdir -p $pki_keypair_path",
+      path    => 'bin:/usr/local/bin:/usr/bin',
+      require => Package[$client_package],
+      before  => File[$pki_keypair_path],
+    }
+    file { $pki_keypair_path:
+      ensure    => directory,
+      owner     => 'bacula',
+      group     => 'bacula',
+      mode      => '0640',
+      require   => Package[$client_package],
+    }
+    exec { 'create_keypair':
+      command => "openssl genrsa -out /tmp/private.key 4096 && openssl req -new -key /tmp/private.key -x509 -out /tmp/public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat /tmp/private.key /tmp/public.crt >$pki_keypair && chmod 0400 $pki_keypair && rm /tmp/private.key /tmp/public.crt",
       creates => "$pki_keypair",
       notify  => Service['bacula-fd'],
+      path    => 'bin:/usr/local/bin:/usr/bin',
+      user    => 'bacula',
+      require   => Package[$client_package],
     }
   }
 
