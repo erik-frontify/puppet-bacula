@@ -51,6 +51,12 @@ FileDaemon {
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
 <% end -%>
+<%- if @pki_encryption -%>
+  PKI Signatures = yes
+  PKI Encryption = yes
+  PKI Keypair = <%= @pki_keypair %>
+  PKI Master Key = <%= @pki_master_key %>
+<% end -%>
 }
 
 # Finally, set where the messages are going to go

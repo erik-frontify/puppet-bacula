@@ -199,6 +199,19 @@
 #   Length of time to {retain volumes}[http://www.bacula.org/5.0.x-manuals/en/main/main/Configuring_Director.html#VolRetention] in
 #   the default incremental pool.
 #
+# [*pki_encryption*]
+#   If set to true encrypt backup on the client with the given keypair
+#
+# [*manage_pki_keypair*]
+#   If true a keypair will be created through puppet on every client, defaults to true
+#
+# [*pki_keypair*]
+#   Path to the client specific TLS keypair which is used to en- and decrypt the backup data
+#
+# [*pki_master_key*]
+#   Public TLS key of the master key to be able to decrypt backup even though the client keypair is lost
+#
+#
 # === Sample Usage
 #
 #  $clients = {
@@ -295,6 +308,10 @@ class bacula (
   String $volume_retention_diff          = '40 Days',
   String $volume_retention_full          = '1 Year',
   String $volume_retention_incr          = '10 Days',
+  Boolean $pki_encryption                = false,
+  Boolean $manage_pki_keypair            = true,
+  String $pki_keypair                    = '/var/lib/bacula/ssl/encryption_keypair.pem',
+  String $pki_master_key                 = '/var/lib/bacula/ssl/certs/master.crt',
   ) {
 
   include 'bacula::common'
@@ -387,6 +404,9 @@ class bacula (
       tls_require       => $tls_require,
       tls_verify_peer   => $tls_verify_peer,
       use_tls           => $use_tls,
+      pki_encryption    => $pki_encryption,
+      pki_keypair       => $pki_keypair,
+      pki_master_key    => $pki_master_key,
     }
   }
 
