@@ -1,5 +1,5 @@
 
-bacula::bat_console_package: 'bacula-console-qt',
+bacula::bat_console_package: 'bacula-console-qt'
 bacula::director_service: bacula-director
 bacula::manage_logwatch: false
 bacula::sqlite_package: bacula-director-sqlite
