@@ -8,3 +8,4 @@ bacula::director_postgresql_package: 'bacula-director-postgresql'
 bacula::storage_mysql_package: bacula-sd-mysql
 bacula::storage_postgresql_package: bacula-sd-pgsql
 bacula::storage_sqlite_package: bacula-sd-sqlite
+bacula::plugin_dir: '/usr/lib/bacula'
