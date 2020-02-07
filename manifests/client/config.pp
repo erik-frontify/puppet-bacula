@@ -49,6 +49,9 @@
 # [*maximum_bandwidth*]
 #   Bandwidth limit for the bacula file director.  This can be used to prevent bacula from saturating network interfaces.
 #
+# [*allow_duplicate_jobs*]
+#   Allow duplicate jobs, if set to no the second job may be canceled if the first job is still running
+#
 # [*priority*]
 #   This directive permits you to control the order in which your jobs will be run by specifying a positive non-zero number. The
 #   higher the number, the lower the job priority. Assuming you are not running concurrent jobs, all queued jobs of priority
@@ -156,6 +159,7 @@ define bacula::client::config (
   Optional[String] $pool_full           = "${pool}.full",
   Optional[String] $pool_incr           = "${pool}.incr",
   Optional[String] $maximum_bandwidth   = undef,
+  Boolean $allow_duplicate_jobs         = false,
   Optional[String] $priority            = undef,
   Boolean $rerun_failed_levels          = false,
   Boolean $restore_enable               = true,
