@@ -103,7 +103,7 @@ class bacula::client (
     exec { "create $pki_keypair_path":
       creates => $pki_keypair_path,
       command => "/bin/mkdir -p $pki_keypair_path",
-      path    => 'bin:/usr/local/bin:/usr/bin',
+      path    => '/bin:/usr/local/bin:/usr/bin',
       require => Package[$client_package],
       before  => File[$pki_keypair_path],
     }
@@ -115,12 +115,13 @@ class bacula::client (
       require   => Package[$client_package],
     }
     exec { 'create_keypair':
-      command => "openssl genrsa -out /tmp/private.key 4096 && openssl req -new -key /tmp/private.key -x509 -out /tmp/public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat /tmp/private.key /tmp/public.crt >$pki_keypair && chmod 0400 $pki_keypair && rm /tmp/private.key /tmp/public.crt",
-      creates => "$pki_keypair",
-      notify  => Service['bacula-fd'],
-      path    => 'bin:/usr/local/bin:/usr/bin',
-      user    => 'bacula',
-      require   => Package[$client_package],
+      command     => "openssl genrsa -out /tmp/private.key 4096 && openssl req -new -key /tmp/private.key -x509 -out /tmp/public.crt -subj '/C=XX/ST=unknown/L=puppet-bacula/O=Bacula Backup/OU=backup/CN=${::fqdn}' && cat /tmp/private.key /tmp/public.crt >$pki_keypair && chmod 0400 $pki_keypair && rm /tmp/private.key /tmp/public.crt /tmp/.rnd",
+      creates     => "$pki_keypair",
+      environment => 'RANDFILE=/tmp/.rnd',
+      notify      => Service['bacula-fd'],
+      path        => '/bin:/usr/local/bin:/usr/bin',
+      user        => 'bacula',
+      require     => Package[$client_package],
     }
   }
 
