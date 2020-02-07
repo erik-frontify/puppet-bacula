@@ -28,6 +28,9 @@
 # [*base*]
 #   The job to use as a base.  Default to undef.
 #
+# [*accurate*]
+#   Set Accurate = yes for job definition (defaults to now unless *base* is specified)
+#
 # [*pool*]
 #   The pool used by the client for backups
 #
@@ -144,6 +147,10 @@ define bacula::client::config (
   String $director_server               = "bacula.${facts['domain']}",
   String $fileset                       = 'Basic:noHome',
   Optional[String] $base                = undef,
+  Boolean $accurate                     = $base ? {
+    undef   => false,
+    default => true,
+  },
   String $pool                          = 'default',
   Optional[String] $pool_diff           = "${pool}.differential",
   Optional[String] $pool_full           = "${pool}.full",
