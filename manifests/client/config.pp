@@ -28,6 +28,9 @@
 # [*base*]
 #   The job to use as a base.  Default to undef.
 #
+# [*accurate*]
+#   Set Accurate = yes for job definition (defaults to now unless *base* is specified)
+#
 # [*pool*]
 #   The pool used by the client for backups
 #
@@ -45,6 +48,9 @@
 #
 # [*maximum_bandwidth*]
 #   Bandwidth limit for the bacula file director.  This can be used to prevent bacula from saturating network interfaces.
+#
+# [*allow_duplicate_jobs*]
+#   Allow duplicate jobs, if set to no the second job may be canceled if the first job is still running
 #
 # [*priority*]
 #   This directive permits you to control the order in which your jobs will be run by specifying a positive non-zero number. The
@@ -144,11 +150,16 @@ define bacula::client::config (
   String $director_server               = "bacula.${facts['domain']}",
   String $fileset                       = 'Basic:noHome',
   Optional[String] $base                = undef,
+  Boolean $accurate                     = $base ? {
+    undef   => false,
+    default => true,
+  },
   String $pool                          = 'default',
   Optional[String] $pool_diff           = "${pool}.differential",
   Optional[String] $pool_full           = "${pool}.full",
   Optional[String] $pool_incr           = "${pool}.incr",
   Optional[String] $maximum_bandwidth   = undef,
+  Boolean $allow_duplicate_jobs         = false,
   Optional[String] $priority            = undef,
   Boolean $rerun_failed_levels          = false,
   Boolean $restore_enable               = true,
