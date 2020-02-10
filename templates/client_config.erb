@@ -38,6 +38,9 @@ Job {
 <% if @accurate -%>
   Accurate = yes
 <% end -%>
+<% if @jobdefs -%>
+  JobDefs = "<%= @jobdefs %>"
+<% end -%>
   Storage  = "<%= @storage_server %>:storage:<%= @pool %>"
   Spool Attributes = yes
 <% if @maximum_bandwidth -%>

@@ -25,11 +25,15 @@
 #
 # [*fileset*]
 #   The file set used by the client for backups
+#
 # [*base*]
 #   The job to use as a base.  Default to undef.
 #
 # [*accurate*]
 #   Set Accurate = yes for job definition (defaults to now unless *base* is specified)
+#
+# [*jobdefs*]
+#   Use defaults defined in the given JobDefs definition
 #
 # [*pool*]
 #   The pool used by the client for backups
@@ -120,6 +124,7 @@
 #     base              => 'LinuxBase',
 #     pool              => 'otherpool',
 #     storage_server    => 'bacula.example.com',
+#     jobdefs           => 'JobDefsName',
 #   }
 #
 # === Copyright
@@ -154,6 +159,7 @@ define bacula::client::config (
     undef   => false,
     default => true,
   },
+  Optional[String] $jobdefs             = undef,
   String $pool                          = 'default',
   Optional[String] $pool_diff           = "${pool}.differential",
   Optional[String] $pool_full           = "${pool}.full",
