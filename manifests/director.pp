@@ -77,6 +77,7 @@ class bacula::director (
   String $volume_retention_full             = '1 Year',
   String $volume_retention_incr             = '10 Days',
   String $storage_default_mount             = '/mnt/bacula',
+  Integer $max_concurrent_jobs              = 5,
   ) {
 
   include 'bacula::common'

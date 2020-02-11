@@ -71,18 +71,33 @@ Director {
   Monitor = yes
 }
 
-# not configure the default Device this Storage Daemon will provide
+# Define the Devices this Storage Daemon will provide
+<% if @_storage_device_hash -%>
+  <%- @_storage_device_hash.each do |name,data| -%>
 Device {
-  Name = "DefaultFileStorage"
-  Media Type = File
-  Archive Device = <%= @storage_default_mount %>/default
-  Label Media = yes
-  Random Access = yes
-  Automatic Mount = yes
-  Removable Media = no
-  Always Open = no
-  Block Checksum = <%= @block_checksum ? 'yes':'no' %>
+  Name = "<%= name %>"
+    <%- data.each do |key,value| -%>
+  <%= key %> = <%= value %>
+    <%- end -%>
 }
+  <%- end -%>
+<%- end -%>
+
+# Define the Cloud definitions this Storage Daemon will provide
+<% if @storage_hash -%>
+  <%- @storage_hash.each do |arr| -%>
+    <%- arr.each do |resource,content| -%>
+<%= resource %> {
+      <%- content.each do |name,data| -%>
+  Name = "<%= name %>"
+        <%- data.each do |key,value| -%>
+  <%= key %> = <%= value %>
+        <%- end -%>
+      <%- end -%>
+}
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
 
 # All other Devices are created by the clients that need them - each will
 # prepare their own device and pool configuration, which will then be
