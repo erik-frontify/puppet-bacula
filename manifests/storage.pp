@@ -54,15 +54,31 @@ class bacula::storage (
   Boolean $tls_verify_peer              = true,
   Boolean $use_tls                      = true,
   Boolean $block_checksum               = true,
+  Hash $storage_device_hash_default     = { 'DefaultFileStorage' => {
+    'Media Type'       => 'File',
+    'Archive Device'   => "$storage_default_mount/default",
+    'Label Media'      => yes,
+    'Random Access'    => yes,
+    'Automatic Mount'  => yes,
+    'Removable Media ' => no,
+    'Always Open'      => no,
+    'Block Checksum'   => $block_checksum ? {
+      default => 'yes',
+      false   => 'no',
+    },
+  },},
+  Hash $storage_device_hash             = {},
+  Array $storage_hash                   = [],
   ) {
 
   include 'bacula::common'
 
+  $_storage_device_hash = $storage_device_hash_default + $storage_device_hash
   package { $storage_package:
     ensure => installed,
   }
 
-  file { [$storage_default_mount, "${storage_default_mount}/default"]:
+  file { $storage_default_mount:
     ensure  => directory,
     owner   => 'bacula',
     group   => 'bacula',
@@ -70,7 +86,37 @@ class bacula::storage (
     seltype => 'bacula_store_t',
     require => Package[$storage_package],
   }
-
+  # create directories defined as Archive Device in the storage_device_hash
+  $_storage_device_hash.each |$name,$data| {
+    $data.filter |$key,$value| { $key == 'Archive Device' }.each |$key,$value| {
+      ensure_resource('file',$value,{
+        ensure  => directory,
+        owner   => 'bacula',
+        group   => 'bacula',
+        mode    => '0755',
+        seltype => 'bacula_store_t',
+        require => [Package[$storage_package],File[$storage_default_mount]],
+      })
+    }
+  }
+  if $storage_hash {
+    $storage_hash.each |$arr| {
+      $arr.each |$res,$cont| {
+        $cont.each |$name,$data| {
+          $data.filter |$key,$value| { $key == 'Archive Device' }.each |$key,$value| {
+            ensure_resource('file',$value,{
+              ensure  => directory,
+              owner   => 'bacula',
+              group   => 'bacula',
+              mode    => '0755',
+              seltype => 'bacula_store_t',
+              require => [Package[$storage_package],File[$storage_default_mount]],
+            })
+          }
+        }
+      }
+    }
+  }
   if $facts['osfamily'] == 'RedHat' and $facts['selinux'] {
     selinux::fcontext { "${storage_default_mount}(/.*)?":
       seltype => 'bacula_store_t',
@@ -114,7 +160,6 @@ class bacula::storage (
     content   => template($storage_template),
     require   => $file_requires,
     notify    => Service['bacula-sd'],
-    show_diff => false,
   }
 
   # Register the Service so we can manage it through Puppet

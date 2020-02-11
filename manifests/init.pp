@@ -41,6 +41,9 @@
 # [*db_user_host*]
 #   The host string used by MySQL to allow connections from
 #
+# [*max_concurrent_jobs*]
+#   The Maxumum number of Concurrent Jobs, defaults to 5
+#
 # [*director_password*]
 #   The director's password
 #
@@ -105,6 +108,16 @@
 #
 # [*plugin_dir*]
 #   The directory Bacula plugins are stored in. Use this parameter if you are providing Bacula plugins for use. Only use if the package in the distro repositories supports plugins or you have included a respository with a newer Bacula packaged for your distro. If this is anything other than `undef` and you are not providing any plugins in this directory Bacula will throw an error every time it starts even if the package supports plugins.
+#
+# [*storage_hash*]
+#
+#   Allows you to define all resource definitions through an array of hashes using puppet or hiera.
+#   Example: {[{'Cloud' => {'DefaultCloudStorage' => { 'Driver' => 'S3', 'AccessKey' => 'XXXXXXXXXX',}}},{'Autochanger' => {'CloudChanger' => {'Changer Device' => '/dev/null', 'Changer Command' => '/dev/null'}}}]}
+#
+# [*storage_device_hash*]
+#
+#   Allows you to define the Device definition through a hash using puppet or hiera.
+#   Example: { 'DefaultFileStorage' => { 'Media Type' => 'File', 'Label Media' => yes,},}
 #
 # [*storage_default_mount*]
 #   Directory where the default disk for file backups is mounted. A subdirectory named <tt>default</tt> will be created allowing you
@@ -274,6 +287,7 @@ class bacula (
   Boolean $is_director                   = false,
   Boolean $is_storage                    = false,
   Boolean $logwatch_enabled              = true,
+  Integer $max_concurrent_jobs           = 5,
   String $mail_command                   = "/usr/sbin/bsmtp -h localhost -f bacula@${facts['fqdn']} -s \\\"Bacula %t %e (for %c)\\\" %r",
   String $mail_to                        = "root@${facts['fqdn']}",
   Optional[String] $mail_to_daemon       = $mail_to,
@@ -287,6 +301,8 @@ class bacula (
   Boolean $manage_logwatch               = true,
   String $operator_command               = "/usr/sbin/bsmtp -h localhost -f bacula@${::fqdn} -s \\\"Bacula Intervention Required (for %c)\\\" %r",
   String $plugin_dir                     = '/usr/lib64/bacula',
+  Optional[Array] $storage_hash          = undef,
+  Optional[Hash] $storage_device_hash    = undef,
   String $storage_default_mount          = '/mnt/bacula',
   String $storage_server                 = $director_server,
   Optional[String] $storage_template     = undef,
@@ -328,6 +344,7 @@ class bacula (
       db_port               => $db_port,
       db_user               => $db_user,
       db_user_host          => $db_user_host,
+      max_concurrent_jobs   => $max_concurrent_jobs,
       dir_template          => $director_template,
       director_password     => $director_password,
       director_server       => $director_server,
@@ -377,6 +394,8 @@ class bacula (
       director_password     => $director_password,
       director_server       => $director_server,
       plugin_dir            => $plugin_dir,
+      storage_hash          => $storage_hash,
+      storage_device_hash   => $storage_device_hash,
       storage_default_mount => $storage_default_mount,
       storage_server        => $storage_server,
       storage_template      => $storage_template,

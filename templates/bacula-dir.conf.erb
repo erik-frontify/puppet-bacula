@@ -13,7 +13,7 @@ Director {
 <% if @plugin_dir -%>
   Plugin Directory = <%= @plugin_dir %>
 <% end -%>
-  Maximum Concurrent Jobs = 5
+  Maximum Concurrent Jobs = <%= @max_concurrent_jobs %>
   Password = "<%= @director_password -%>"
   Messages = "<%= @director_server -%>:messages:daemon"
 <% if @use_tls -%>
