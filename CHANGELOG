@@ -1,3 +1,7 @@
+2020-02-17  Michael Watters <wattersm@watters.ws> - 2.0.10
+    * Use puppet TLS certs by default.
+    * Add support for encrypted backups.
+
 2020-01-30  Michael Watters <wattersm@watters.ws> - 2.0.9
     * Bump version number.
     * Fix bugs in mysql resources.
