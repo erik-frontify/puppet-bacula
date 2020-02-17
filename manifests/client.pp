@@ -71,17 +71,6 @@ class bacula::client (
     show_diff => false,
   }
 
-  if $::operatingsystem =~ /(?i:opensuse)/ {
-    file { '/etc/systemd/system/bacula-fd.service.d':
-        ensure => directory,
-    } ->
-
-    file { '/etc/systemd/system/bacula-fd.service.d/override.conf':
-        source => 'puppet:///modules/bacula/systemd/override.conf',
-        before => Service['bacula-fd'],
-    }
-  }
-
   if $facts['selinux'] {
     selinux::module { 'bacula_fd_fix':
       source_te => 'puppet:///modules/bacula/selinux/bacula_fd_fix.te',
