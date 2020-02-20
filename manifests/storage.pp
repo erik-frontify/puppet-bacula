@@ -68,7 +68,7 @@ class bacula::storage (
     },
   },},
   Hash $storage_device_hash             = {},
-  Array $storage_hash                   = {},
+  Array $storage_hash                   = [],
   ) {
 
   include 'bacula::common'

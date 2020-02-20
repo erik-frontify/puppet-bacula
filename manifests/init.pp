@@ -301,7 +301,7 @@ class bacula (
   Boolean $manage_logwatch               = true,
   String $operator_command               = "/usr/sbin/bsmtp -h localhost -f bacula@${::fqdn} -s \\\"Bacula Intervention Required (for %c)\\\" %r",
   String $plugin_dir                     = '/usr/lib64/bacula',
-  Optional[Array] $storage_hash           = undef,
+  Optional[Array] $storage_hash          = undef,
   Optional[Hash] $storage_device_hash    = undef,
   String $storage_default_mount          = '/mnt/bacula',
   String $storage_server                 = $director_server,
