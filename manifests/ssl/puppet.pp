@@ -9,13 +9,18 @@ class bacula::ssl::puppet (
     # These files must be copied into place due to SELinux restrictions.
     $tls_cert_path = dirname($tls_ca_cert)
     $tls_key_path  = regsubst($tls_cert_path, 'certs', 'private_keys')
+    $tls_parent_dir = dirname($tls_cert_path)
 
     file {
       default:
           ensure => directory,
       ;
 
+      $tls_parent_dir:
+      ;
+
       [$tls_cert_path, $tls_key_path]:
+        require => File[$tls_parent_dir],
       ;
     }
 

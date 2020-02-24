@@ -11,22 +11,29 @@ describe 'bacula::ssl::puppet' do
 
       case facts[:operatingsystem]
         when 'Fedora'
-          puppet_ssl_dir = '/etc/puppet/ssl'
-          tls_cert_path  = '/var/lib/bacula/ssl/certs'
-          tls_key_path   = '/var/lib/bacula/ssl/private_keys'
+          puppet_ssl_dir  = '/etc/puppet/ssl'
+          tls_cert_path   = '/var/lib/bacula/ssl/certs'
+          tls_key_path    = '/var/lib/bacula/ssl/private_keys'
+          tls_parent_path = '/var/lib/bacula/ssl'
         when 'windows'
-          puppet_ssl_dir = 'C:/ProgramData/PuppetLabs/puppet/etc/ssl'
-          tls_cert_path  = 'C:/ProgramData/Bacula/lib/ssl/certs'
-          tls_key_path   = 'C:/ProgramData/Bacula/lib/ssl/private_keys'
+          puppet_ssl_dir  = 'C:/ProgramData/PuppetLabs/puppet/etc/ssl'
+          tls_cert_path   = 'C:/ProgramData/Bacula/lib/ssl/certs'
+          tls_key_path    = 'C:/ProgramData/Bacula/lib/ssl/private_keys'
+          tls_parent_path = 'C:/ProgramData/Bacula/lib/ssl'
         else
-          puppet_ssl_dir = '/etc/puppetlabs/puppet/ssl'
-          tls_cert_path  = '/var/lib/bacula/ssl/certs'
-          tls_key_path   = '/var/lib/bacula/ssl/private_keys'
+          puppet_ssl_dir  = '/etc/puppetlabs/puppet/ssl'
+          tls_cert_path   = '/var/lib/bacula/ssl/certs'
+          tls_key_path    = '/var/lib/bacula/ssl/private_keys'
+          tls_parent_path = '/var/lib/bacula/ssl'
       end
 
       tls_ca_cert = "#{tls_cert_path}/ca.pem"
       tls_cert    = "#{tls_cert_path}/example-host.example.com.pem"
       tls_key     = "#{tls_key_path}/example-host.example.com.pem"
+
+      it do
+        is_expected.to contain_file(tls_parent_path) .with({ :ensure => 'directory' })
+      end
 
       it do
         is_expected.to contain_file(tls_cert_path) .with({ :ensure => 'directory' })
