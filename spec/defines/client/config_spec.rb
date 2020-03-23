@@ -48,8 +48,7 @@ describe 'bacula::client::config' do
                 :mode   => "0640",
                 :show_diff => false,
               })
-              .that_notifies('Exec[bacula-dir reload]')
-              #.that_comes_before('Service[bacula-dir]')
+              .that_notifies('Exec[bconsole reload]')
         end
     end
   end

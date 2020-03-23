@@ -48,6 +48,6 @@ define bacula::director::custom_config (
     source  => $source,
     require => File['/etc/bacula/bacula-dir.conf'],
     before  => Service['bacula-dir'],
-    notify  => Exec['bacula-dir reload'],
+    notify  => Exec['bconsole reload'],
   }
 }

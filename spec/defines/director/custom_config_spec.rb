@@ -39,7 +39,7 @@ describe 'bacula::director::custom_config' do
             })
             .that_requires('File[/etc/bacula/bacula-dir.conf]')
             .that_comes_before('Service[bacula-dir]')
-            .that_notifies('Exec[bacula-dir reload]')
+            .that_notifies('Exec[bconsole reload]')
       end
     end
   end

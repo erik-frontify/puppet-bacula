@@ -123,7 +123,7 @@ class bacula::director (
     force   => $manage_config_dir,
     recurse => $manage_config_dir,
     source  => $config_dir_source,
-    notify  => Exec['bacula-dir reload'],
+    notify  => Exec['bconsole reload'],
     require => Package[$director_package],
   }
 
@@ -177,9 +177,8 @@ class bacula::director (
     group     => 'bacula',
     mode      => '0640',
     content   => template($dir_template),
-    #require   => $file_requires,
     before    => Service['bacula-dir'],
-    notify    => Exec['bacula-dir reload'],
+    notify    => Exec['bconsole reload'],
     show_diff => false,
   }
 

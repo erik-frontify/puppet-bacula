@@ -38,6 +38,8 @@ class bacula::console::bat (
   String $package = 'bacula-console-bat',
   ) {
 
+  include 'bacula::console'
+
   package { $package:
     ensure => present,
   }

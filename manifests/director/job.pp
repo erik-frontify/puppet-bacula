@@ -85,6 +85,6 @@ define bacula::director::job (
         content => template('bacula/custom-job.conf.erb'),
         require => File['/etc/bacula/bacula-dir.conf'],
         before  => Service['bacula-dir'],
-        notify  => Exec['bacula-dir reload'],
+        notify  => Exec['bconsole reload'],
     }
 }

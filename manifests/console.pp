@@ -53,9 +53,8 @@ class bacula::console (
     show_diff => false,
   }
 
-  # Instead of restarting the <code>bacula-dir</code> service which could interrupt running jobs tell the director to reload its
-  # configuration.
-  exec { 'bacula-dir reload':
+  # This causes the console to reload its configuration and avoids service interruptions which could interrupt running jobs.
+  exec { 'bconsole reload':
     command     => '/bin/echo reload | /usr/sbin/bconsole',
     logoutput   => on_failure,
     refreshonly => true,

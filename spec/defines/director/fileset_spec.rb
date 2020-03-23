@@ -40,7 +40,7 @@ describe 'bacula::director::fileset' do
             })
             .that_requires('File[/etc/bacula/bacula-dir.conf]')
             .that_comes_before('Service[bacula-dir]')
-            .that_notifies('Exec[bacula-dir reload]')
+            .that_notifies('Exec[bconsole reload]')
       end
 
       context "name with spaces" do
@@ -56,7 +56,7 @@ describe 'bacula::director::fileset' do
             })
             .that_requires('File[/etc/bacula/bacula-dir.conf]')
             .that_comes_before('Service[bacula-dir]')
-            .that_notifies('Exec[bacula-dir reload]')
+            .that_notifies('Exec[bconsole reload]')
         end
       end
     end

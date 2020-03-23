@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe 'bacula::console::bat' do
+  it do
+    is_expected.to contain_class('bacula::console')
+  end
+
   package = 'bacula-console-bat'
   it do
     is_expected.to contain_package(package)

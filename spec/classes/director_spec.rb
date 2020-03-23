@@ -12,6 +12,7 @@ describe 'bacula::director' do
       },
       {
         'operatingsystem'        => 'Fedora',
+        'operatingsystemrelease' => ['30', '31'],
       },
      ],
   }
@@ -84,7 +85,7 @@ describe 'bacula::director' do
               :recurse => true,
               :source  => 'puppet:///modules/bacula/bacula-empty.dir',
             })
-            .that_notifies('Exec[bacula-dir reload]')
+            .that_notifies('Exec[bconsole reload]')
             .that_requires("Package[#{p}]")
       end
 
@@ -120,7 +121,7 @@ describe 'bacula::director' do
               :show_diff => false,
             })
             .that_comes_before('Service[bacula-dir]')
-            .that_notifies('Exec[bacula-dir reload]')
+            .that_notifies('Exec[bconsole reload]')
       end
 
       context 'managed mysql backend' do

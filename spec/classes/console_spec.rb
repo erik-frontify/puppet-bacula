@@ -24,7 +24,7 @@ describe 'bacula::console' do
   end
 
   it do
-    is_expected.to contain_exec('bacula-dir reload')
+    is_expected.to contain_exec('bconsole reload')
         .with({
           'command' => '/bin/echo reload | /usr/sbin/bconsole',
           'logoutput' => 'on_failure',
