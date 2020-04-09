@@ -48,6 +48,15 @@ Job {
 <% end -%>
   Schedule = "<%= @client_schedule %>"
   Pool     = "<%= @storage_server %>:pool:<%= @pool %>"
+<% if @pool_incr -%>
+  Incremental Backup Pool = "<%= @storage_server %>:pool:<%= @pool_incr %>"
+<% end -%>
+<% if @pool_diff -%>
+  Differential Backup Pool = "<%= @storage_server %>:pool:<%= @pool_diff %>"
+<% end -%>
+<% if @pool_full -%>
+  Full Backup Pool = "<%= @storage_server %>:pool:<%= @pool_full %>"
+<% end -%>
   Messages = "<%= @director_server %>:messages:standard"
   Rerun Failed Levels = <%= @rerun_failed_levels  ? 'yes':'no' %>
 <% if @allow_duplicate_jobs -%>
@@ -89,6 +98,15 @@ Job {
   FileSet  = "<%= @fileset %>"
   Storage  = "<%= @storage_server %>:storage:<%= @pool %>"
   Pool     = "<%= @storage_server %>:pool:<%= @pool %>"
+<% if @pool_incr -%>
+  Incremental Backup Pool = "<%= @storage_server %>:pool:<%= @pool_incr %>"
+<% end -%>
+<% if @pool_diff -%>
+  Differential Backup Pool = "<%= @storage_server %>:pool:<%= @pool_diff %>"
+<% end -%>
+<% if @pool_full -%>
+  Full Backup Pool = "<%= @storage_server %>:pool:<%= @pool_full %>"
+<% end -%>
   Messages = "<%= @director_server %>:messages:standard"
   Where    = <%= @restore_where %>
 }
