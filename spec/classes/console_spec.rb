@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'bacula::console' do
   package = 'bacula-console'
 
+  it { is_expected.to contain_class('bacula::common') }
+
   it do
     is_expected.to contain_package(package)
         .with({

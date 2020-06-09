@@ -39,6 +39,8 @@ class bacula::console (
   String $package                   = 'bacula-console',
   ) {
 
+  include 'bacula::common'
+
   package { $package:
     ensure => present,
   }
