@@ -6,8 +6,7 @@ Client {
   File Retention = 12 Weeks
   Job Retention  = 1 Year
   Auto Prune = yes
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable = <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
 <% @tls_allowed_cn.each do |allowed_cn| -%>
   TLS Allowed CN = "<%= allowed_cn %>"
@@ -20,7 +19,6 @@ Client {
 <% end -%>
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 }
 
 Job {

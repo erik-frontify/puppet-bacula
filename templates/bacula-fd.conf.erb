@@ -8,8 +8,7 @@
 Director {
   Name = "<%= @director_server -%>:director"
   Password = "<%= @director_password -%>"
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable =  <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
   TLS Verify Peer = <%= @tls_verify_peer ? 'yes':'no' %>
 <% @tls_allowed_cn.each do |allowed_cn| -%>
@@ -25,7 +24,6 @@ Director {
   # Any certificate signed by the bacula (puppet) CA will be accepted as valid.
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 }
 
 # Now configure the actual File Daemon
@@ -37,8 +35,7 @@ FileDaemon {
 <% end -%>
   PID Directory = <%= @pid_dir %>
   Maximum Concurrent Jobs = 3
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable =  <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
 <% if @tls_ca_cert -%>
   TLS CA Certificate File = <%= @tls_ca_cert %>
@@ -50,7 +47,6 @@ FileDaemon {
 <% end -%>
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 <%- if @pki_encryption -%>
   PKI Signatures = yes
   PKI Encryption = yes

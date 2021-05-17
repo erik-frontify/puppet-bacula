@@ -8,8 +8,7 @@ Director {
   Name = "<%= @director_server -%>:director"
   Address = <%= @director_server %>
   Password = "<%= @director_password %>"
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable = <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
 <% if @tls_ca_cert -%>
   TLS CA Certificate File = <%= @tls_ca_cert %>
@@ -19,5 +18,4 @@ Director {
 <% end -%>
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 }

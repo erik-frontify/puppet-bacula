@@ -16,8 +16,7 @@ Director {
   Maximum Concurrent Jobs = <%= @max_concurrent_jobs %>
   Password = "<%= @director_password -%>"
   Messages = "<%= @director_server -%>:messages:daemon"
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable = <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
   TLS Verify Peer = <%= @tls_verify_peer ? 'yes':'no' %>
 <% @tls_allowed_cn.each do |allowed_cn| -%>
@@ -31,7 +30,6 @@ Director {
 <% end -%>
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 }
 
 # This is where the catalog information will be stored (basically
@@ -86,8 +84,7 @@ Storage {
   Password = "<%= @director_password -%>"
   Device = "DefaultFileStorage"
   Media Type = File
-<% if @use_tls -%>
-  TLS Enable = yes
+  TLS Enable = <%= @use_tls ? 'yes':'no' %>
   TLS Require = <%= @tls_require ? 'yes':'no' %>
 <% if @tls_ca_cert -%>
   TLS CA Certificate File = <%= @tls_ca_cert %>
@@ -97,7 +94,6 @@ Storage {
 <% end -%>
   TLS Certificate = <%= @tls_cert %>
   TLS Key = <%= @tls_key %>
-<% end -%>
 }
 
 Pool {
