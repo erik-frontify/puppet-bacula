@@ -1,6 +1,6 @@
 {
   "name": "blackknight36-bacula",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "author": "Michael Watters <wattersm@watters.ws>",
   "summary": "Installs and manages the bacula backup infrastructure.",
   "license": "Apache-2.0",
@@ -12,7 +12,7 @@
   "operatingsystem_support": [
     { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7", "8" ] },
     { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7", "8" ] },
-    { "operatingsystem":"Fedora", "operatingsystemrelease": [ "29", "30", "31", "32" ] },
+    { "operatingsystem":"Fedora", "operatingsystemrelease": [ "33", "34" ] },
     { "operatingsystem":"windows", "operatingsystemrelease":[ "7", "10" ] },
     { "operatingsystem":"FreeBSD", "operatingsystemrelease": [ "12" ] }
   ],

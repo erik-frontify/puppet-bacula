@@ -179,7 +179,7 @@ define bacula::client::config (
   String $tls_key                       = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
   Boolean $tls_require                  = true,
   Boolean $tls_verify_peer              = true,
-  Boolean $use_tls                      = false,
+  Boolean $use_tls                      = true,
   ) {
 
   include 'bacula::console'

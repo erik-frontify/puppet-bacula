@@ -63,7 +63,7 @@ class bacula::director (
   Optional[String] $tls_key                 = undef,
   Boolean $tls_require                      = true,
   Boolean $tls_verify_peer                  = true,
-  Boolean $use_tls                          = false,
+  Boolean $use_tls                          = true,
   Boolean $use_vol_purge_script             = false,
   Optional[Boolean] $use_vol_purge_mvdir    = undef,
   Boolean $volume_autoprune                 = true,
