@@ -311,81 +311,15 @@ class bacula (
   include 'bacula::common'
 
   if $is_director {
-    class { 'bacula::director':
-      backup_catalog        => $backup_catalog,
-      clients               => $clients,
-      console_password      => $console_password,
-      db_backend            => $db_backend,
-      db_database           => $db_database,
-      db_host               => $db_host,
-      db_password           => $db_password,
-      db_port               => $db_port,
-      db_user               => $db_user,
-      db_user_host          => $db_user_host,
-      max_concurrent_jobs   => $max_concurrent_jobs,
-      dir_template          => $director_template,
-      director_password     => $director_password,
-      director_server       => $director_server,
-      mail_command          => $mail_command,
-      mail_to               => $mail_to,
-      mail_to_daemon        => $mail_to_daemon,
-      mail_to_on_error      => $mail_to_on_error,
-      mail_to_operator      => $mail_to_operator,
-      manage_config_dir     => $manage_config_dir,
-      manage_db             => $manage_db,
-      manage_db_tables      => $manage_db_tables,
-      manage_logwatch       => $manage_logwatch,
-      operator_command      => $operator_command,
-      plugin_dir            => $plugin_dir,
-      storage_server        => $storage_server,
-      tls_allowed_cn        => $tls_allowed_cn,
-      tls_ca_cert           => $tls_ca_cert,
-      tls_ca_cert_dir       => $tls_ca_cert_dir,
-      tls_cert              => $tls_cert,
-      tls_key               => $tls_key,
-      tls_require           => $tls_require,
-      tls_verify_peer       => $tls_verify_peer,
-      use_tls               => $use_tls,
-      use_vol_purge_script  => $use_vol_purge_script,
-      use_vol_purge_mvdir   => $use_vol_purge_mvdir,
-      volume_autoprune      => $volume_autoprune,
-      volume_autoprune_diff => $volume_autoprune_diff,
-      volume_autoprune_full => $volume_autoprune_full,
-      volume_autoprune_incr => $volume_autoprune_incr,
-      volume_retention      => $volume_retention,
-      volume_retention_diff => $volume_retention_diff,
-      volume_retention_full => $volume_retention_full,
-      volume_retention_incr => $volume_retention_incr,
-    }
+    include 'bacula::director'
 
     if $manage_logwatch {
-      class { 'bacula::director::logwatch':
-        logwatch_enabled => $logwatch_enabled,
-      }
+      include 'bacula::director::logwatch'
     }
   }
 
   if $is_storage {
-    class { 'bacula::storage':
-      console_password      => $console_password,
-      db_backend            => $db_backend,
-      director_password     => $director_password,
-      director_server       => $director_server,
-      plugin_dir            => $plugin_dir,
-      storage_hash          => $storage_hash,
-      storage_device_hash   => $storage_device_hash,
-      storage_default_mount => $storage_default_mount,
-      storage_server        => $storage_server,
-      storage_template      => $storage_template,
-      tls_allowed_cn        => $tls_allowed_cn,
-      tls_ca_cert           => $tls_ca_cert,
-      tls_ca_cert_dir       => $tls_ca_cert_dir,
-      tls_cert              => $tls_cert,
-      tls_key               => $tls_key,
-      tls_require           => $tls_require,
-      tls_verify_peer       => $tls_verify_peer,
-      use_tls               => $use_tls,
-    }
+    include 'bacula::storage'
   }
 
   if $is_client {
