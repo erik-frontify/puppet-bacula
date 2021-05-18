@@ -10,11 +10,9 @@
   "description": "This module manages Bacula, a complete backup solution.",
   "tags": ["bacula", "backup"],
   "operatingsystem_support": [
-    { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7", "8" ] },
-    { "operatingsystem":"CentOS", "operatingsystemrelease":[ "6", "7", "8" ] },
+    { "operatingsystem":"RedHat", "operatingsystemrelease":[ "7", "8" ] },
+    { "operatingsystem":"CentOS", "operatingsystemrelease":[ "7", "8" ] },
     { "operatingsystem":"Fedora", "operatingsystemrelease": [ "33", "34" ] },
-    { "operatingsystem":"windows", "operatingsystemrelease":[ "7", "10" ] },
-    { "operatingsystem":"FreeBSD", "operatingsystemrelease": [ "12" ] }
   ],
   "dependencies": [
     {"name":"puppet/extlib", "version_requirement":">=4.0.0"},
