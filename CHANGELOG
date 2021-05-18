@@ -1,6 +1,7 @@
 2021-05-17 Michael Watters <wattersm@watters.ws> - 2.0.12
-    * Use include statement for the bacula client class
-    * Update client parameter documentation.
+    * Refactor classes to use include statements
+    * Move class parameters out of init.pp
+    * Update documentation.
 
 2020-02-17  Michael Watters <wattersm@watters.ws> - 2.0.10
     * Use puppet TLS certs by default.
