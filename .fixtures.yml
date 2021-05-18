@@ -7,6 +7,10 @@ fixtures:
       'firewall':     'puppetlabs/firewall'
       'mysql':        'puppetlabs/mysql'
       'postgresql':   'puppetlabs/postgresql'
-      'selinux':      'puppet/selinux'
-      'stdlib':       'puppetlabs/stdlib'
       'sqlite':       'puppetlabs/sqlite'
+    repositories:
+      selinux:
+        repo: https://github.com/blackknight36/puppet-selinux-1.git
+      stdlib:
+        repo: https://github.com/puppetlabs/puppetlabs-stdlib.git
+        ref: 5.2.0
