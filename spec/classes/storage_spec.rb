@@ -6,14 +6,13 @@ describe 'bacula::storage' do
     :supported_os   => [
       {
         'operatingsystem'        => 'CentOS',
-      },
-      {
-        'operatingsystem'        => 'RedHat',
+        'operatingsystemrelease' => ['7', '8']
       },
       {
         'operatingsystem'        => 'Fedora',
-      },
-    ],
+        'operatingsystemrelease' => ['33', '34', '35']
+      }
+    ]
   }
 
   storage_package = 'bacula-storage'
