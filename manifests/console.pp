@@ -4,12 +4,13 @@
 #
 # === Parameters
 #
-# All <tt>bacula+ classes are called from the main <tt>::bacula</tt> class.  Parameters
-# are documented there.
+# [*console_template*]
+#   The ERB template to use for configuring the bconsole instead of the one
+#   included with the module
 #
 # === Copyright
 #
-# Copyright 2018 Michael Watters
+# Copyright 2021 Michael Watters
 #
 # === License
 #

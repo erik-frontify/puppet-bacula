@@ -4,8 +4,23 @@
 #
 # === Parameters
 #
-# All <tt>bacula+ classes are called from the main <tt>bacula</tt> class.  Parameters
-# are documented there.
+# [*storage_hash*]
+#
+#   Allows you to define all resource definitions through an array of hashes using puppet or hiera.
+#   Example: {[{'Cloud' => {'DefaultCloudStorage' => { 'Driver' => 'S3', 'AccessKey' => 'XXXXXXXXXX',}}},{'Autochanger' => {'CloudChanger' => {'Changer Device' => '/dev/null', 'Changer Command' => '/dev/null'}}}]}
+#
+# [*storage_device_hash*]
+#
+#   Allows you to define the Device definition through a hash using puppet or hiera.
+#   Example: { 'DefaultFileStorage' => { 'Media Type' => 'File', 'Label Media' => yes,},}
+#
+# [*storage_default_mount*]
+#   Directory where the default disk for file backups is mounted. A subdirectory named <tt>default</tt> will be created allowing you
+#   to define additional devices in Bacula which use the same disk. Defaults to <tt>'/mnt/bacula'</tt>.
+#
+# [*storage_template*]
+#   The ERB template to use for configuring the storage daemon instead of the
+#   one included with the module
 #
 # === Actions:
 # * Enforce the DB component package package be installed
@@ -16,7 +31,7 @@
 #
 # === Copyright
 #
-# Copyright 2020 Michael Watters
+# Copyright 2021 Michael Watters
 #
 # === License
 #
