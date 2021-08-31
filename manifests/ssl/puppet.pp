@@ -5,6 +5,8 @@ class bacula::ssl::puppet (
     String $tls_key        = "/var/lib/bacula/ssl/private_keys/${fqdn}.pem",
     ) {
 
+    include 'bacula::client'
+
     # Use certs signed by the puppet CA as the default bacula certificates
     # These files must be copied into place due to SELinux restrictions.
     $tls_cert_path = dirname($tls_ca_cert)
@@ -27,6 +29,7 @@ class bacula::ssl::puppet (
     file {
       default:
           show_diff => false,
+          notify    => Service['bacula-fd'],
       ;
 
       $tls_ca_cert:

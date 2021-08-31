@@ -50,6 +50,7 @@ describe 'bacula::ssl::puppet' do
               :source => "file://#{puppet_ssl_dir}/certs/ca.pem",
             })
             .that_requires("File[#{tls_cert_path}]")
+            .that_notifies('Service[bacula-fd]')
       end
 
       it do
@@ -59,6 +60,7 @@ describe 'bacula::ssl::puppet' do
               :source => "file://#{puppet_ssl_dir}/certs/#{node}.pem",
             })
             .that_requires("File[#{tls_cert_path}]")
+            .that_notifies('Service[bacula-fd]')
       end
 
       it do
@@ -68,6 +70,7 @@ describe 'bacula::ssl::puppet' do
               :source => "file://#{puppet_ssl_dir}/private_keys/#{node}.pem",
             })
             .that_requires("File[#{tls_key_path}]")
+            .that_notifies('Service[bacula-fd]')
       end
     end
   end
