@@ -32,11 +32,22 @@ describe 'bacula::client' do
         }
 
         it do
+          is_expected.to contain_selboolean('domain_can_mmap_files')
+            .with({
+              :value      => 'on',
+              :persistent => true,
+            })
+            .that_comes_before('Service[bacula-fd]')
+            .that_notifies('Service[bacula-fd]')
+        end
+
+        it do
           is_expected.to contain_selinux__module('bacula_fd_fix')
             .with({
               :source_te => 'puppet:///modules/bacula/selinux/bacula_fd_fix.te',
             })
             .that_comes_before('Service[bacula-fd]')
+            .that_notifies('Service[bacula-fd]')
         end
       end
     end

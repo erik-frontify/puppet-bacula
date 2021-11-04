@@ -148,8 +148,16 @@ class bacula::client (
   }
 
   if $facts['selinux'] {
+    selboolean { 'domain_can_mmap_files':
+        value      => 'on',
+        persistent => true,
+        notify     => Service['bacula-fd'],
+        before     => Service['bacula-fd'],
+    }
+
     selinux::module { 'bacula_fd_fix':
       source_te => 'puppet:///modules/bacula/selinux/bacula_fd_fix.te',
+      notify    => Service['bacula-fd'],
       before    => Service['bacula-fd'],
     }
   }
