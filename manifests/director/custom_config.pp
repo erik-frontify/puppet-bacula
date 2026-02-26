@@ -26,7 +26,7 @@
 
 define bacula::director::custom_config (
   String $ensure = 'file',
-  String $director_server = $facts['fqdn'],
+  String $director_server = $facts['networking']['fqdn'],
   Optional[String] $content  = undef,
   Optional[String] $source   = undef
   ) {

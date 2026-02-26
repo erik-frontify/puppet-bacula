@@ -51,7 +51,7 @@ class bacula::director::logwatch (
     content => template('bacula/logwatch/services.conf.erb'),
   }
 
-  $services_source = $::operatingsystem ? {
+  $services_source = $facts['os']['name'] ? {
     /(Debian|Ubuntu)/ => 'puppet:///modules/bacula/logwatch/bacula.pl',
     default           => undef,
   }
@@ -66,7 +66,7 @@ class bacula::director::logwatch (
     source => $services_source,
   }
 
-  $applybaculadate_source = $::operatingsystem ? {
+  $applybaculadate_source = $facts['os']['name'] ? {
     /(Debian|Ubuntu)/ => 'puppet:///modules/bacula/logwatch/applybaculadate.pl',
     default           => undef,
   }

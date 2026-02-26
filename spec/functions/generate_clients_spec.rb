@@ -1,13 +1,15 @@
 require 'spec_helper'
 
-describe 'generate_clients' do
-  on_supported_os.each do |os, facts|
-    context "on #{os}" do
+describe 'bacula::generate_clients' do
+  it { is_expected.to run.with_params({}).and_not_raise_error }
 
-      it "should exist" do
-        Puppet::Parser::Functions.function("generate_clients").should == "function_generate_clients"
-      end
-
-    end
+  it 'accepts a clients hash without error' do
+    clients = {
+      'client1.example.com' => {
+        'fileset'         => 'Basic:noHome',
+        'client_schedule' => 'WeeklyCycle',
+      },
+    }
+    is_expected.to run.with_params(clients).and_not_raise_error
   end
 end

@@ -63,7 +63,7 @@ class bacula::director::mysql (
     Mysql_database[$db_database] ~> Exec['make_db_tables']
   }
 
-  $make_db_tables_command = $::operatingsystem ? {
+  $make_db_tables_command = $facts['os']['name'] ? {
     /(Ubuntu|Debian)/ => '/usr/lib/bacula/make_bacula_tables',
     default           => '/usr/libexec/bacula/make_mysql_tables',
   }

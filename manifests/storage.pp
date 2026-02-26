@@ -51,7 +51,7 @@ class bacula::storage (
   String $console_password              = extlib::cache_data('bacula', 'console_password', extlib::random_password(32)),
   String $db_backend                    = 'sqlite',
   String $director_password             = extlib::cache_data('bacula', 'director_password', extlib::random_password(32)),
-  String $director_server               = $facts['fqdn'],
+  String $director_server               = $facts['networking']['fqdn'],
   String $var_dir                       = '/var/lib/bacula',
   String $pid_dir                       = $var_dir,
   Optional[String] $plugin_dir          = '/usr/lib64/bacula',
@@ -63,8 +63,8 @@ class bacula::storage (
   Array[String] $tls_allowed_cn         = [],
   String $tls_ca_cert                   = '/var/lib/bacula/ssl/certs/ca.pem',
   Optional[String] $tls_ca_cert_dir     = undef,
-  String $tls_cert                      = "/var/lib/bacula/ssl/certs/${::fqdn}.pem",
-  String $tls_key                       = "/var/lib/bacula/ssl/private_keys/${::fqdn}.pem",
+  String $tls_cert                      = "/var/lib/bacula/ssl/certs/${facts['networking']['fqdn']}.pem",
+  String $tls_key                       = "/var/lib/bacula/ssl/private_keys/${facts['networking']['fqdn']}.pem",
   Boolean $tls_require                  = true,
   Boolean $tls_verify_peer              = true,
   Boolean $use_tls                      = true,
@@ -137,7 +137,7 @@ class bacula::storage (
       }
     }
   }
-  if $facts['osfamily'] == 'RedHat' and $facts['selinux'] {
+  if $facts['os']['name'] == 'RedHat' and $facts['os']['selinux']['enabled'] {
     selinux::fcontext { "${storage_default_mount}(/.*)?":
       seltype => 'bacula_store_t',
     }

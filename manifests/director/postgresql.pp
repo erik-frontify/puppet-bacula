@@ -49,7 +49,7 @@ class bacula::director::postgresql (
     }
   }
 
-  $make_db_tables_command = $::operatingsystem ? {
+  $make_db_tables_command = $facts['os']['name'] ? {
     /(Ubuntu|Debian)/ => '/usr/lib/bacula/make_bacula_tables',
     default           => '/usr/libexec/bacula/make_postgresql_tables',
   }
