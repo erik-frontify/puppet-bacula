@@ -1,8 +1,8 @@
 class bacula::ssl::puppet (
     String $puppet_ssl_dir = '/etc/puppetlabs/puppet/ssl',
     String $tls_ca_cert    = '/var/lib/bacula/ssl/certs/ca.pem',
-    String $tls_cert       = "/var/lib/bacula/ssl/certs/${fqdn}.pem",
-    String $tls_key        = "/var/lib/bacula/ssl/private_keys/${fqdn}.pem",
+    String $tls_cert       = "/var/lib/bacula/ssl/certs/${facts['networking']['fqdn']}.pem",
+    String $tls_key        = "/var/lib/bacula/ssl/private_keys/${facts['networking']['fqdn']}.pem",
     ) {
 
     include 'bacula::client'
@@ -38,12 +38,12 @@ class bacula::ssl::puppet (
       ;
 
       $tls_cert:
-          source  => "file://${puppet_ssl_dir}/certs/${fqdn}.pem",
+          source  => "file://${puppet_ssl_dir}/certs/${facts['networking']['fqdn']}.pem",
           require => File["${tls_cert_path}"],
       ;
 
       $tls_key:
-          source  => "file://${puppet_ssl_dir}/private_keys/${fqdn}.pem",
+          source  => "file://${puppet_ssl_dir}/private_keys/${facts['networking']['fqdn']}.pem",
           require => File["${tls_key_path}"],
       ;
     }

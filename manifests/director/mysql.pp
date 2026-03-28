@@ -33,6 +33,8 @@ class bacula::director::mysql (
   String $db_user      = 'bacula',
   String $db_user_host = 'localhost',
   String $db_package   = 'bacula-storage-mysql',
+  String $collate      = 'utf8mb3_general_ci',
+  String $charset      = 'utf8mb3',
   Boolean $manage_db   = true,
   ) {
 
@@ -49,6 +51,8 @@ class bacula::director::mysql (
       user     => $db_user,
       password => $db_password,
       host     => $db_user_host,
+      collate  => $collate,
+      charset  => $charset,
       grant    => ['ALL'],
       before   => Exec['make_db_tables'],
     }
@@ -59,7 +63,7 @@ class bacula::director::mysql (
     Mysql_database[$db_database] ~> Exec['make_db_tables']
   }
 
-  $make_db_tables_command = $::operatingsystem ? {
+  $make_db_tables_command = $facts['os']['name'] ? {
     /(Ubuntu|Debian)/ => '/usr/lib/bacula/make_bacula_tables',
     default           => '/usr/libexec/bacula/make_mysql_tables',
   }

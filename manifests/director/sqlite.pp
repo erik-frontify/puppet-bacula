@@ -59,7 +59,7 @@ class bacula::director::sqlite (
     ;
   }
 
-  $make_db_tables_command = $::operatingsystem ? {
+  $make_db_tables_command = $facts['os']['name'] ? {
     /(Ubuntu|Debian)/ => '/usr/lib/bacula/make_bacula_tables',
     default           => '/usr/local/libexec/bacula/make_sqlite3_tables.sh',
   }

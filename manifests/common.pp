@@ -42,7 +42,7 @@ class bacula::common (
   ) {
 
   # FreeBSD does not have a "common" package
-  if $facts['operatingsystem'] != 'FreeBSD' {
+  if $facts['os']['name'] != 'FreeBSD' {
     package { $packages:
       ensure => installed,
     }
